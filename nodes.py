@@ -1,9 +1,50 @@
 import random
 
+
+def get_sorted_list(original_list):
+    if original_list is None:
+        return []
+    values = list(original_list)
+    specials = [x for x in values if x in ["None", "Random"]]
+    rest = [x for x in values if x not in ["None", "Random"]]
+    return specials + sorted(rest, key=lambda item: str(item).lower())
+
+
 # --- DATA CONSTANTS (Ported from the Web App) ---
 
-GENDERS = ["female", "male", "futa", "other", "Random"]
+Anatomie_Liste = [
+    "None", "alraune", "amorphous", "amphibian", "anthro", "anthropomorphic", "arachnid",
+    "arthropod", "centaur", "centauroid", "cervitaur", "cyborg", "deer taur", "dragon taur",
+    "elemental", "feral", "flora", "gelatinous", "horse taur", "human", "humanoid",
+    "insect girl", "insectoid", "lamia", "lion taur", "mechanical", "mermaid", "merfolk",
+    "merman", "naga", "partially anthro", "plant", "quadruped", "robot", "semi-anthro",
+    "skeleton", "slime", "snake lower body", "spider girl", "taur", "tiger taur", "undead", "zombie"
+]
+
+Spezies_Liste = [
+    "None", "alligator anthro", "angel", "ant girl", "anthro bear", "anthro cat", "anthro fox",
+    "anthro horse", "anthro hyena", "anthro lion", "anthro rabbit", "anthro tiger", "anthro wolf",
+    "avian", "bat anthro", "bee girl", "bipedal wolf", "bird anthro", "bull anthro", "bunnygirl",
+    "catgirl", "celestial", "cephalopod", "crocodile anthro", "demon", "draconic anthro",
+    "dragon anthro", "dragonkin", "drake", "equine anthro", "fallen angel", "faun", "fish anthro",
+    "goat anthro", "goblin", "griffin anthro", "gryphon", "harpy", "hobgoblin", "incubus",
+    "inari", "infernal", "kappa", "kitsune", "lizardman", "lycanthrope", "minotaur", "nekomata",
+    "octopus", "oni", "orc", "reptilian anthro", "satyr", "serpent", "shark anthro", "snake anthro",
+    "sphinx", "succubus", "tanuki", "tengu", "tentacle anthro", "tiefling", "tiger taur", "troll",
+    "vampire", "werebear", "werecat", "werefox", "werehorse", "werehyena", "werelion", "wererabbit",
+    "weretiger", "werewolf"
+]
+
+GENDERS = Anatomie_Liste
+ALL_BODY_TYPES = Spezies_Liste
+
 RATINGS = ["rating_safe", "rating_questionable", "rating_explicit"]
+
+PHOTO_BOOST_POTION = (
+    "award-winning photorealistic 8k portrait, highly detailed raw photo, "
+    "shot on iPhone 15 Pro, 35mm lens, authentic human skin texture with pores and goosebumps, "
+    "realistic heavy muscle shading, natural studio lighting, masterfully integrated"
+)
 
 SCORE_SCHEMES = [
     "default high",          # score_9, score_8_up, score_7_up, score_6_up
@@ -33,15 +74,21 @@ AGES = ["18", "20", "25", "30", "35", "40", "45", "50", "60", "MILF", "mature", 
 ETHNICITIES = [
     "Caucasian", "Japanese", "Korean", "Chinese", "African American", "Nubian",
     "Latino", "Scandinavian", "Italian", "Russian", "Middle Eastern", "South Asian",
-    "Native American", "Pacific Islander", "Mixed Race", "Pale-skinned", "Dark-skinned", "Random"
+    "Native American", "Pacific Islander", "Mixed Race", "Pale-skinned", "Dark-skinned",
+    "None", "Random"
 ]
 
 SKIN_TYPES = [
     "Random",
+    "fur", "fluffy fur", "soft fur", "thick fur", "short fur", "long fur", "underfur", "mane",
+    "feathered", "feathers", "plumage", "scales", "scaly", "smooth scales", "rough scales",
+    "skin", "smooth skin", "soft skin", "shiny skin", "wet skin", "chitin", "exoskeleton",
+    "bark", "wooden", "slimy", "wet", "glossy", "translucent", "see-through", "patterned fur",
+    "spots", "stripes", "markings", "two-tone fur", "multicolored fur",
     "pale skin", "fair skin", "tan skin", "dark skin", "olive skin",
-    "freckled skin", "textured skin with pores", "oily skin", "wet skin", "sweaty skin",
-    "shiny skin", "goosebumps", "sun-damaged skin", "perfect skin", "soft skin",
-    "light skin", "brown skin", "black skin", "body paint", "tattoo"
+    "freckled skin", "textured skin with pores", "oily skin", "sweaty skin",
+    "goosebumps", "sun-damaged skin", "perfect skin", "light skin", "brown skin",
+    "black skin", "body paint", "tattoo"
 ]
 
 HAIR_COLORS = [
@@ -127,7 +174,7 @@ MALE_HAIRSTYLES = [
 ]
 
 FULL_OUTFITS = [
-    "Random",
+    "Random", "None",
     "nude", "lingerie", "lace underwear", "bikini", "micro bikini", "one-piece swimsuit",
     "shell_bikini", "frilled_swimsuit", "front_zipper_swimsuit", "bikesuit", "wrestling_outfit",
     "evening_gown", "evening gown", "cocktail_dress", "cocktail dress", "gown", "wedding_dress",
@@ -267,7 +314,28 @@ ALL_BODY_TYPES = [
     "muscular_female", "muscular_male", "slim_thick", "curvy_thick",
     "flat_figured", "plump", "chubby", "soft_body", "skinny_fat",
     "hourglass_waist", "broad_hips", "narrow_waist", "pear_shaped",
-    "apple_shaped", "athletic_female", "athletic_male"
+    "apple_shaped", "athletic_female", "athletic_male",
+    # Fantasy / creature morphs used in monster prompt examples
+    "centaur", "lycanthrope", "werewolf", "monster", "anthro griffin", "anthro dragon",
+    "anthro shark", "minotaur", "satyr", "faun", "naga", "mermaid", "merman",
+    "anthro bear", "anthro panther", "anthro equine", "anthro stallion", "anthro mare",
+    "jackalfolk", "ursine", "anubis", "draconic humanoid",
+    # Full categorized species / anatomy taxonomy
+    "human", "humanoid", "anthro", "anthropomorphic", "feral", "quadruped", "semi-anthro",
+    "partially anthro", "taur", "centauroid", "naga", "lamia", "snake lower body", "merfolk",
+    "insectoid", "arachnid", "arthropod", "slime", "gelatinous", "amorphous", "skeleton",
+    "undead", "zombie", "mechanical", "cyborg", "robot", "plant", "flora", "alraune",
+    "elemental", "werefox", "anthro fox", "kitsune", "werecat", "anthro cat", "nekomata",
+    "catgirl", "werebear", "weretiger", "anthro tiger", "werelion", "anthro lion",
+    "werehyena", "anthro hyena", "wererabbit", "anthro rabbit", "bunnygirl", "werehorse",
+    "anthro horse", "equine anthro", "dragonkin", "drake", "draconic anthro", "dragon anthro",
+    "lizardman", "reptilian anthro", "bull anthro", "goat anthro", "harpy", "bird anthro",
+    "avian", "gryphon", "griffin anthro", "sphinx", "demon", "infernal", "tiefling", "angel",
+    "celestial", "fallen angel", "succubus", "incubus", "vampire", "bat anthro", "orc",
+    "goblin", "hobgoblin", "troll", "oni", "tengu", "kappa", "tanuki", "inari", "serpent",
+    "snake anthro", "crocodile anthro", "alligator anthro", "shark anthro", "fish anthro",
+    "octopus", "cephalopod", "tentacle anthro", "insect girl", "bee girl", "spider girl",
+    "ant girl", "horse taur", "deer taur", "cervitaur", "lion taur", "tiger taur", "dragon taur"
 ]
 
 FEMALE_BODY_TYPES = [
@@ -385,7 +453,11 @@ LOCATIONS = [
     "train_platform", "subway_car", "amusement_park", "ferris_wheel",
     "arcade", "shopping_mall", "market_street", "festival", "fireworks_view",
     "cliffside", "lakeside", "riverbank", "waterfall", "snowy_forest",
-    "blossom_park", "school_hallway", "school_rooftop", "locker_corridor"
+    "blossom_park", "school_hallway", "school_rooftop", "locker_corridor",
+    # Fantasy / creature scene examples
+    "jungle temple ruins background", "coral reef background", "deep ocean environment",
+    "volcanic background", "ancient forest background", "egyptian god aesthetics",
+    "gold ornaments", "snowy mountain background", "desert ruins", "moonlit cave"
 ]
 
 LIGHTING = [
@@ -401,7 +473,11 @@ LIGHTING = [
     # Additional nuanced lighting tags
     "soft_shadow", "strong_shadow", "backlit", "front_lighting",
     "side_lighting", "top_lighting", "underlighting", "colored_lighting",
-    "pink_neon_lighting", "blue_neon_lighting", "studio_backdrop_lighting"
+    "pink_neon_lighting", "blue_neon_lighting", "studio_backdrop_lighting",
+    # Fantasy / creature lighting examples
+    "bright_rim_lighting", "cinematic_lighting", "volumetric lighting",
+    "warm rim lighting", "dramatic lighting", "underwater lighting",
+    "dark cinematic lighting", "golden rim light", "bioluminescent markings"
 ]
 
 CAMERAS = [
@@ -429,7 +505,10 @@ SEX_ACTS = [
     "double penetration", "gangbang", "bukkake", "creampie", "facial", "internal ejaculation",
     "masturbation", "spitroast", "group sex",
     "cum_on_breasts", "cum_on_stomach", "cum_on_thighs", "hand_on_thigh",
-    "teasing", "groping_breasts", "groping_butt", "public_sex", "bath_sex"
+    "teasing", "groping_breasts", "groping_butt", "public_sex", "bath_sex",
+    "deep coupling", "explicit deep coupling", "intimate coupling", "creature coupling",
+    "equine coupling", "wolf coupling", "werewolf coupling", "horse coupling",
+    "centaur coupling", "canine coupling", "anthro coupling", "monster coupling"
 ]
 
 SEX_POSITIONS = [
@@ -439,22 +518,127 @@ SEX_POSITIONS = [
     "against wall", "on desk", "suspended", "facesitting", "prone bone",
     "legs over shoulders", "lotus position", "bridge position", "bent over",
     "cowgirl_on_chair", "reverse_cowgirl_on_sofa", "standing_doggy", "table_edge_sex",
-    "side-by-side_position"
+    "side-by-side_position", "intimate position", "intimate positions",
+    "body to body", "close-quarters coupling", "passionate embrace",
+    "pointing_downwards", "fully_erect", "pointing_upwards", "standing_doggy_style",
+    "alpha female stance", "battle stance", "powerful stance"
 ]
 
-NSFW_MODIFIERS = [
-    "nude", "naked", "topless", "bottomless", "nipples", "areolae", "pussy juice",
-    "sweat", "tears", "blush", "ahegao", "rolling eyes", "tongue out", "drooling",
-    "hard nipples", "detailed genitals", "uncensored", "cum on body", "cum on face",
-    "messy hair", "heavy breathing",
-    "wet_skin", "oil_on_skin", "body_glitter", "thigh_squeeze", "panty_pull_aside",
-    "visible_panty_line", "cameltoe", "underboob", "sideboob", "nip_slip",
-    # Additional explicit and fetish-leaning modifiers from common SD/Danbooru usage
-    "cum_in_mouth", "cum_on_hair", "semen", "dripping_cum", "multiple_cumshots",
-    "saliva", "string_of_saliva", "spitstring", "glistening_skin",
-    "sweaty_skin", "spread_pussy", "gaping", "pussy_juice_trail",
-    "handprint_on_ass", "red_marks_on_skin"
-]
+NSFW_MODIFIER_SECTIONS = {
+    "core_nsfw_modifiers": [
+        "nude", "naked", "topless", "bottomless", "nipples", "areolae", "pussy juice",
+        "sweat", "tears", "blush", "ahegao", "rolling eyes", "tongue out", "drooling",
+        "hard nipples", "detailed genitals", "uncensored", "cum on body", "cum on face",
+        "messy hair", "heavy breathing", "wet_skin", "oil_on_skin", "body_glitter",
+        "thigh_squeeze", "panty_pull_aside", "visible_panty_line", "cameltoe",
+        "underboob", "sideboob", "nip_slip"
+    ],
+    "additional_explicit_and_fetish_modifiers": [
+        "cum_in_mouth", "cum_on_hair", "semen", "dripping_cum", "multiple_cumshots",
+        "saliva", "string_of_saliva", "spitstring", "glistening_skin",
+        "sweaty_skin", "spread_pussy", "gaping", "pussy_juice_trail",
+        "handprint_on_ass", "red_marks_on_skin", "explicit deep coupling",
+        "dynamic muscle tension", "intense passion", "thick shaggy dark fur",
+        "sleek white horse lower body", "thick leather skin", "heavy muscular chest",
+        "glowing amber eyes", "smoky fur texture", "sleek glossy coat texture"
+    ],
+    "anatomy_and_genital_detail_modifiers": [
+        "flared_knot_at_base", "thick_glans_ridge", "large testicles",
+        "prominent pulsing veins", "detailed equine anatomy", "detailed canine anatomy",
+        "equine_genitalia", "horse_penis", "dog_penis", "canine_genitalia",
+        "male_genitalia", "female_genitalia", "horse_genitalia", "wolf_genitalia",
+        "human_penis", "human_vagina", "human_anus", "big_testicles", "thick_corona_glandis",
+        "large_testicles", "detailed_veins", "prominent_glans_ridge", "wide open pussy",
+        "spreading pussy lips", "pink interior texture", "labia minora", "clitoris",
+        "breasts", "small breasts", "medium breasts", "large breasts", "huge breasts",
+        "hyper breasts", "multi-breast", "nipples", "puffy nipples", "inverted nipples",
+        "areola", "pussy", "vagina", "labia", "detailed pussy", "wet pussy",
+        "anus", "ass", "uterus", "womb", "penis", "large penis", "huge penis",
+        "hyper penis", "human penis", "canine penis", "equine penis", "tapered penis",
+        "ridged penis", "barbed penis", "flared tip", "knot", "knotted penis",
+        "sheath", "sheath bulge", "balls", "scrotum", "large balls", "heavy balls",
+        "cum-filled balls", "glans", "tip", "erection", "flaccid", "semi-erect",
+        "dripping precum", "futanari", "hermaphrodite", "intersex", "dickgirl",
+        "penis and vagina", "balls and pussy", "knotted futanari", "equine futanari",
+        "multiple genitals", "cloaca", "ovipositor", "tentacle genitals",
+        "internal genitals", "hemipenes", "multiple penises", "multi-cock",
+        "pseudopenis", "genital slit", "gaping", "creampie overflow",
+        "pussy juice trailing", "hyper", "hyper breasts", "hyper penis",
+        "hyper muscles", "hyper proportions", "pregnancy", "pregnant",
+        "heavily pregnant", "inflation", "expansion", "muscle growth",
+        "hyper muscular", "soft body", "plush", "plush body", "chubby",
+        "thick", "thick thighs", "wide hips", "narrow waist", "skinny",
+        "emaciated", "amputee", "prosthetic limbs", "body horror", "mutated",
+        "transformation", "partial transformation", "mid transformation",
+        "transforming", "werewolf transformation", "anthro transformation",
+        "cum", "semen", "pussy juice", "vaginal fluids", "saliva", "sweat",
+        "wet", "dripping", "overflow", "cum dripping", "cum string",
+        "cum pool", "messy", "sex", "intercourse", "vaginal", "anal", "oral",
+        "fellatio", "cunnilingus", "paizuri", "titjob", "handjob", "footjob",
+        "thighjob", "grinding", "tribadism", "penetration", "deep penetration",
+        "knotting", "knotted", "knot locked", "knot swelling", "breeding",
+        "impregnation", "creampie", "cum inside", "cum on body", "cum on face",
+        "facial", "bukkake", "double penetration", "triple penetration",
+        "spitroast", "reverse spitroast", "cowgirl", "reverse cowgirl",
+        "missionary", "doggy style", "from behind", "standing sex", "against wall",
+        "on top", "riding", "facesitting", "69", "sixty-nine", "oral sex",
+        "deepthroat", "gagging", "kissing", "french kissing", "neck kissing",
+        "licking", "biting", "scratching", "holding hands", "hugging",
+        "embracing", "restraining", "pinning down", "dominant", "submissive",
+        "rough sex", "gentle sex", "passionate"
+    ],
+    "anthro_fur_and_anatomy_modifiers": [
+        "fur", "fluffy fur", "soft fur", "thick fur", "short fur", "long fur",
+        "underfur", "mane", "feathered", "feathers", "plumage", "scales",
+        "scaly", "smooth scales", "rough scales", "chitin", "exoskeleton",
+        "bark", "wooden", "slimy", "wet", "glossy", "translucent",
+        "see-through", "patterned fur", "spots", "stripes", "markings",
+        "two-tone fur", "multicolored fur",
+        "breasts", "small breasts", "medium breasts", "large breasts", "huge breasts",
+        "hyper breasts", "multi-breast", "nipples", "puffy nipples", "inverted nipples",
+        "areola", "pussy", "vagina", "labia", "clitoris", "detailed pussy",
+        "wet pussy", "anus", "ass", "uterus", "womb",
+        "penis", "large penis", "huge penis", "hyper penis", "human penis",
+        "canine penis", "equine penis", "tapered penis", "ridged penis",
+        "barbed penis", "flared tip", "knot", "knotted penis", "sheath",
+        "sheath bulge", "balls", "scrotum", "large balls", "heavy balls",
+        "cum-filled balls", "glans", "tip", "erection", "flaccid",
+        "semi-erect", "dripping precum"
+    ],
+    "bondage_and_restraint_modifiers": [
+        "bound", "tied up", "restrained", "handcuffs", "rope", "bondage",
+        "collar", "leash", "gag", "blindfold", "spread legs", "arms behind back",
+        "legs spread"
+    ],
+    "quality_and_anatomy_tags": [
+        "detailed anatomy", "accurate anatomy", "correct anatomy", "realistic anatomy",
+        "stylized anatomy", "anatomically correct", "detailed genitals", "realistic genitals",
+        "soft shading", "detailed shading", "muscular definition", "muscular chest",
+        "defined abs", "soft belly", "plush thighs", "score_9", "score_8_up",
+        "score_7_up", "masterpiece", "best quality", "highly detailed", "intricate details"
+    ],
+    "creature_and_fantasy_surface_modifiers": [
+        "greenish scales", "iridescent snake scales", "bioluminescent markings"
+    ],
+}
+
+
+def _flatten_nsfw_sections(section_map):
+    flattened = []
+    for entries in section_map.values():
+        flattened.extend(entries)
+    seen = set()
+    ordered = []
+    for tag in flattened:
+        if tag in seen:
+            continue
+        seen.add(tag)
+        ordered.append(tag)
+    return ordered
+
+
+NSFW_MODIFIERS = _flatten_nsfw_sections(NSFW_MODIFIER_SECTIONS)
+
 
 # --- HELPER FUNCTIONS ---
 
@@ -465,6 +649,115 @@ def get_smart_random(category_list, seed, exclude_none=True):
         return ""
     random.seed(seed)
     return random.choice(pool)
+
+
+def _normalize_prompt_value(value):
+    if value is None:
+        return ""
+    value = str(value).strip()
+    if value in {"", "None", "Random"}:
+        return ""
+    return value
+
+
+def _is_ignored_value(value):
+    if value is None:
+        return True
+    return str(value).strip() in {"", "None", "Random"}
+
+
+def _format_eye_value(value):
+    value = _normalize_prompt_value(value)
+    if not value:
+        return ""
+    lowered = value.lower()
+    if lowered.endswith("_eyes") or lowered.endswith(" eyes"):
+        return value
+    return f"{value} eyes"
+
+
+def _clean_tag_list(items):
+    cleaned = []
+    seen = set()
+    for item in items:
+        value = _normalize_prompt_value(item)
+        if not value:
+            continue
+        key = value.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        cleaned.append(value)
+    return cleaned
+
+
+def build_subject_prompt_from_ui(values):
+    values = values or {}
+
+    def pick(key):
+        value = values.get(key, "")
+        if value is None:
+            return ""
+        text = str(value).strip()
+        if text in {"", "None", "Random"}:
+            return ""
+        return text
+
+    is_ignored = _is_ignored_value
+
+    lead_token = pick("lead_token") or pick("gender") or "person"
+    setup_group = pick("setup_group") or pick("group_setup") or pick("person_setup")
+
+    parts = [lead_token]
+    if setup_group and setup_group not in {"solo", "1girl", "1boy", "1other", "duo"}:
+        parts.append(setup_group)
+
+    age = pick("age")
+    if age:
+        parts.append(f"{age} years old:1.1")
+
+    body = pick("body_type")
+    if body:
+        parts.append(body)
+
+    skin = pick("skin_texture")
+    if skin:
+        parts.append(skin)
+
+    hair_color = pick("hair_color")
+    hair_style = pick("hair_style")
+    if hair_color and hair_style:
+        parts.append(f"{hair_color} {hair_style}")
+    elif hair_color:
+        parts.append(hair_color)
+    elif hair_style:
+        parts.append(hair_style)
+
+    full_outfit = pick("full_outfit")
+    if full_outfit:
+        parts.append(full_outfit)
+
+    for key in ["top_clothing", "bottom_clothing", "headwear", "shoes", "accessories"]:
+        value = pick(key)
+        if value:
+            parts.append(value)
+
+    for key in ["breast_size", "breast_shape", "expression", "pose"]:
+        value = pick(key)
+        if value:
+            parts.append(value)
+
+    nsfw_modifier = values.get("nsfw_modifier", "")
+    if not is_ignored(nsfw_modifier):
+        parts.append(nsfw_modifier)
+
+    bondage = values.get("bondage_restraint", "")
+    if not is_ignored(bondage):
+        parts.append(bondage)
+
+    prompt = "(" + ", ".join(parts) + ")"
+    return prompt
+
 
 # --- NODES ---
 
@@ -508,7 +801,7 @@ class CR_Pony_Subject:
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("subject_prompt",)
+    RETURN_NAMES = ("text_output",)
     FUNCTION = "generate_subject"
     CATEGORY = "CyberRealistic Pony"
 
@@ -518,67 +811,94 @@ class CR_Pony_Subject:
                         pose, breast_size, breast_shape, custom_tags="", nsfw_modifiers=False,
                         leg_feature="Random", butt_feature="Random",
                         face_shape="Random", expression="Random", hair_length="Random",
-                        extra_clothing_tags=""):
+                        extra_clothing_tags="", lead_token=None):
 
         # Seed the RNG
         random.seed(seed)
 
-        # Resolve Randoms
-        r_gender = get_smart_random(GENDERS, seed) if gender == "Random" else gender
-        r_age = get_smart_random(AGES, seed + 1) if age == "Random" else age
-        r_ethnicity = get_smart_random(ETHNICITIES, seed + 2) if ethnicity == "Random" else ethnicity
-        r_body = get_smart_random(ALL_BODY_TYPES, seed + 3) if body_type == "Random" else body_type
-        r_skin = get_smart_random(SKIN_TYPES, seed + 4) if skin_texture == "Random" else skin_texture
-        r_h_color = get_smart_random(HAIR_COLORS, seed + 5) if hair_color == "Random" else hair_color
-        r_h_style = get_smart_random(ALL_HAIRSTYLES, seed + 6) if hair_style == "Random" else hair_style
-        r_eyes = get_smart_random(EYE_COLORS, seed + 7) if eye_color == "Random" else eye_color
-        r_pose = get_smart_random(ALL_POSES, seed + 9) if pose == "Random" else pose
+        # Resolve Randoms - but ignore Random/None completely; never inject defaults for them.
+        r_gender = gender if not _is_ignored_value(gender) else ""
+        r_age = age if not _is_ignored_value(age) else ""
+        r_ethnicity = ethnicity if not _is_ignored_value(ethnicity) else ""
+        r_body = body_type if not _is_ignored_value(body_type) else ""
+        r_skin = skin_texture if not _is_ignored_value(skin_texture) else ""
+        r_h_color = hair_color if not _is_ignored_value(hair_color) else ""
+        r_h_style = hair_style if not _is_ignored_value(hair_style) else ""
+        r_eyes = eye_color if not _is_ignored_value(eye_color) else ""
+        r_pose = pose if not _is_ignored_value(pose) else ""
 
-        # Construct Noun
-        noun = "woman" if r_gender == "female" else "man" if r_gender == "male" else "person"
+        explicit_lead = (lead_token or "").strip()
+        if explicit_lead and explicit_lead != "Random":
+            noun = explicit_lead
+        else:
+            noun = "woman" if r_gender == "female" else "man" if r_gender == "male" else str(r_gender or "person").strip() or "person"
+
+        r_gender_clean = _normalize_prompt_value(r_gender)
+        r_age_clean = _normalize_prompt_value(r_age)
+        r_ethnicity_clean = _normalize_prompt_value(r_ethnicity)
+        r_body_clean = _normalize_prompt_value(r_body)
+        r_skin_clean = _normalize_prompt_value(r_skin)
+        r_h_color_clean = _normalize_prompt_value(r_h_color)
+        r_h_style_clean = _normalize_prompt_value(r_h_style)
+        r_eyes_clean = _format_eye_value(r_eyes)
+        r_pose_clean = _normalize_prompt_value(r_pose)
 
         # Construct String (avoid "hair hair" when tag already contains hair, e.g. straight_hair)
-        eth_str = f"{r_ethnicity} {noun}" if r_ethnicity != "Caucasian" else noun
-        hair_part = "" if "hair" in r_h_style.lower() else " hair"
-        prompt = f"({eth_str}, {r_age} years old:1.1), {r_body}, {r_skin}, {r_h_color} {r_h_style}{hair_part}, {r_eyes} eyes"
+        eth_str = noun if not r_ethnicity_clean or r_ethnicity_clean in {"Caucasian"} else f"{r_ethnicity_clean} {noun}"
+        hair_part = "" if r_h_style_clean and "hair" in r_h_style_clean.lower() else " hair" if r_h_style_clean else ""
+        prompt_parts = [eth_str]
+        if r_age_clean:
+            prompt_parts.append(f"{r_age_clean} years old:1.1")
+        if r_body_clean:
+            prompt_parts.append(r_body_clean)
+        if r_skin_clean:
+            prompt_parts.append(r_skin_clean)
+        if r_h_color_clean and r_h_style_clean:
+            prompt_parts.append(f"{r_h_color_clean} {r_h_style_clean}{hair_part}")
+        elif r_h_style_clean:
+            prompt_parts.append(r_h_style_clean)
+        elif r_h_color_clean:
+            prompt_parts.append(r_h_color_clean)
+        if r_eyes_clean:
+            prompt_parts.append(r_eyes_clean)
+        prompt = "(" + ", ".join(part for part in prompt_parts if part and part != "()") + ")"
 
         # Clothing selection
         clothing_tags = []
-        r_full_outfit = get_smart_random(FULL_OUTFITS, seed + 8) if full_outfit == "Random" else full_outfit
-        if r_full_outfit and r_full_outfit not in ["Random", "None"]:
+        r_full_outfit = full_outfit if not _is_ignored_value(full_outfit) else ""
+        if r_full_outfit:
             clothing_tags.append(r_full_outfit)
 
-        def _resolve_choice(choice, data, offset):
-            if choice is None:
-                return None
-            if choice == "Random":
-                return get_smart_random(data, seed + offset)
-            return choice
+        def _resolve_choice(choice, data=None, offset=None):
+            if _is_ignored_value(choice):
+                return ""
+            return str(choice).strip()
 
-        r_top = _resolve_choice(top_clothing, TOP_CLOTHING, 12)
-        r_bottom = _resolve_choice(bottom_clothing, BOTTOM_CLOTHING, 13)
-        r_head = _resolve_choice(headwear, HEADWEAR, 14)
-        r_shoes = _resolve_choice(shoes, FOOTWEAR, 15)
-        r_acc = _resolve_choice(accessories, ACCESSORIES, 16)
+        r_top = _resolve_choice(top_clothing)
+        r_bottom = _resolve_choice(bottom_clothing)
+        r_head = _resolve_choice(headwear)
+        r_shoes = _resolve_choice(shoes)
+        r_acc = _resolve_choice(accessories)
 
         for item in [r_top, r_bottom, r_head, r_shoes, r_acc]:
-            if item and item not in ["Random", "None"]:
+            if item:
                 clothing_tags.append(item)
 
         if clothing_tags:
             prompt += f", wearing {', '.join(clothing_tags)}"
 
-        # Pose
-        prompt += f", {r_pose}"
+        feature_parts = []
+        if r_pose and r_pose not in ["Random", "None"]:
+            feature_parts.append(r_pose)
 
         # Breasts (Only if not male)
         if r_gender != "male":
             r_b_size = get_smart_random(BREAST_SIZES, seed + 10) if breast_size == "Random" else breast_size
             r_b_shape = get_smart_random(BREAST_SHAPES, seed + 11) if breast_shape == "Random" else breast_shape
             if r_b_size and r_b_size != "None":
-                prompt += f", {r_b_size}"
+                feature_parts.append(r_b_size)
             if r_b_shape and r_b_shape != "None":
-                prompt += f", {r_b_shape}"
+                feature_parts.append(r_b_shape)
 
         # Extra body-part controls
         def _resolve_feature(choice, data, offset):
@@ -596,23 +916,41 @@ class CR_Pony_Subject:
 
         for feat in [r_leg, r_butt, r_face, r_expr, r_hlen]:
             if feat and feat not in ["Random", "None"]:
-                prompt += f", {feat}"
+                feature_parts.append(feat)
 
-        # Extra Clothing & Custom Tags at the end
-        if extra_clothing_tags.strip():
-            prompt += f", {extra_clothing_tags.strip()}"
+        extra_custom_parts = []
         if custom_tags.strip():
-            prompt += f", {custom_tags.strip()}"
+            for raw in [part.strip() for part in custom_tags.split(',')]:
+                if not raw:
+                    continue
+                lowered = raw.lower()
+                if raw in NSFW_MODIFIERS or lowered in {"pussy", "vagina", "anus", "ass", "penis", "balls", "nipple", "nipples", "genitals", "genitalia", "clitoris", "labia"}:
+                    feature_parts.append(raw)
+                else:
+                    extra_custom_parts.append(raw)
 
         # NSFW Auto-Modifiers
         if nsfw_modifiers:
-            mods = random.sample(NSFW_MODIFIERS, 2)
-            prompt += f", {', '.join(mods)}"
-            if r_gender == "male":
-                prompt += ", penis, balls"
-            elif r_gender == "female":
-                prompt += ", pussy"
+            # Do not inject hardcoded anatomy/default tags when the UI values are None/Random.
+            # The selected modifier and custom tags are the only allowed source for NSFW content.
+            pass
 
+        if feature_parts:
+            clean_parts = _clean_tag_list(feature_parts)
+            if clean_parts:
+                prompt += f", ({', '.join(clean_parts)})"
+
+        # Extra Clothing & Custom Tags at the end
+        if extra_clothing_tags.strip():
+            cleaned_extra = ", ".join(_clean_tag_list([tag.strip() for tag in extra_clothing_tags.split(',')]))
+            if cleaned_extra:
+                prompt += f", {cleaned_extra}"
+        if extra_custom_parts:
+            clean_custom = _clean_tag_list(extra_custom_parts)
+            if clean_custom:
+                prompt += f", {', '.join(clean_custom)}"
+
+        print(f"[CyberRealistic Pony Subject] {prompt}")
         return (prompt,)
 
 
@@ -654,8 +992,8 @@ class CR_Pony_Subject_Female:
             }
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("subject_prompt",)
+    RETURN_TYPES = ()
+    RETURN_NAMES = ()
     FUNCTION = "generate_subject"
     CATEGORY = "CyberRealistic Pony"
 
@@ -680,10 +1018,33 @@ class CR_Pony_Subject_Female:
         r_eyes = get_smart_random(EYE_COLORS, seed + 7) if eye_color == "Random" else eye_color
         r_pose = get_smart_random(ALL_POSES, seed + 9) if pose == "Random" else pose
 
+        r_age_clean = _normalize_prompt_value(r_age)
+        r_ethnicity_clean = _normalize_prompt_value(r_ethnicity)
+        r_body_clean = _normalize_prompt_value(r_body)
+        r_skin_clean = _normalize_prompt_value(r_skin)
+        r_h_color_clean = _normalize_prompt_value(r_h_color)
+        r_h_style_clean = _normalize_prompt_value(r_h_style)
+        r_eyes_clean = _format_eye_value(r_eyes)
+
         noun = "woman"
-        eth_str = f"{r_ethnicity} {noun}" if r_ethnicity != "Caucasian" else noun
-        hair_part = "" if "hair" in r_h_style.lower() else " hair"
-        prompt = f"({eth_str}, {r_age} years old:1.1), {r_body}, {r_skin}, {r_h_color} {r_h_style}{hair_part}, {r_eyes} eyes"
+        eth_str = noun if not r_ethnicity_clean or r_ethnicity_clean in {"Caucasian"} else f"{r_ethnicity_clean} {noun}"
+        hair_part = "" if r_h_style_clean and "hair" in r_h_style_clean.lower() else " hair" if r_h_style_clean else ""
+        prompt_parts = [eth_str]
+        if r_age_clean:
+            prompt_parts.append(f"{r_age_clean} years old:1.1")
+        if r_body_clean:
+            prompt_parts.append(r_body_clean)
+        if r_skin_clean:
+            prompt_parts.append(r_skin_clean)
+        if r_h_color_clean and r_h_style_clean:
+            prompt_parts.append(f"{r_h_color_clean} {r_h_style_clean}{hair_part}")
+        elif r_h_style_clean:
+            prompt_parts.append(r_h_style_clean)
+        elif r_h_color_clean:
+            prompt_parts.append(r_h_color_clean)
+        if r_eyes_clean:
+            prompt_parts.append(r_eyes_clean)
+        prompt = "(" + ", ".join(part for part in prompt_parts if part and part != "()") + ")"
 
         clothing_tags = []
         r_full_outfit = get_smart_random(FULL_OUTFITS, seed + 8) if full_outfit == "Random" else full_outfit
@@ -710,15 +1071,17 @@ class CR_Pony_Subject_Female:
         if clothing_tags:
             prompt += f", wearing {', '.join(clothing_tags)}"
 
-        prompt += f", {r_pose}"
+        feature_parts = []
+        if r_pose and r_pose not in ["Random", "None"]:
+            feature_parts.append(r_pose)
 
         # Breasts (always applicable here)
         r_b_size = get_smart_random(BREAST_SIZES, seed + 10) if breast_size == "Random" else breast_size
         r_b_shape = get_smart_random(BREAST_SHAPES, seed + 11) if breast_shape == "Random" else breast_shape
         if r_b_size and r_b_size != "None":
-            prompt += f", {r_b_size}"
+            feature_parts.append(r_b_size)
         if r_b_shape and r_b_shape != "None":
-            prompt += f", {r_b_shape}"
+            feature_parts.append(r_b_shape)
 
         def _resolve_feature(choice, data, offset):
             if not choice:
@@ -735,18 +1098,40 @@ class CR_Pony_Subject_Female:
 
         for feat in [r_leg, r_butt, r_face, r_expr, r_hlen]:
             if feat and feat not in ["Random", "None"]:
-                prompt += f", {feat}"
+                feature_parts.append(feat)
 
-        if extra_clothing_tags.strip():
-            prompt += f", {extra_clothing_tags.strip()}"
+        extra_custom_parts = []
         if custom_tags.strip():
-            prompt += f", {custom_tags.strip()}"
+            for raw in [part.strip() for part in custom_tags.split(',')]:
+                if not raw:
+                    continue
+                lowered = raw.lower()
+                if raw in NSFW_MODIFIERS or lowered in {"pussy", "vagina", "anus", "ass", "penis", "balls", "nipple", "nipples", "genitals", "genitalia", "clitoris", "labia"}:
+                    feature_parts.append(raw)
+                else:
+                    extra_custom_parts.append(raw)
 
         if nsfw_modifiers:
             mods = random.sample(NSFW_MODIFIERS, 2)
-            prompt += f", {', '.join(mods)}"
-            prompt += ", pussy"
+            for mod in mods:
+                feature_parts.append(mod)
+            feature_parts.append("pussy")
 
+        if feature_parts:
+            clean_parts = _clean_tag_list(feature_parts)
+            if clean_parts:
+                prompt += f", ({', '.join(clean_parts)})"
+
+        if extra_clothing_tags.strip():
+            cleaned_extra = ", ".join(_clean_tag_list([tag.strip() for tag in extra_clothing_tags.split(',')]))
+            if cleaned_extra:
+                prompt += f", {cleaned_extra}"
+        if extra_custom_parts:
+            clean_custom = _clean_tag_list(extra_custom_parts)
+            if clean_custom:
+                prompt += f", {', '.join(clean_custom)}"
+
+        print(f"[CyberRealistic Pony Female Subject] {prompt}")
         return (prompt,)
 
 
@@ -786,8 +1171,8 @@ class CR_Pony_Subject_Male:
             }
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("subject_prompt",)
+    RETURN_TYPES = ()
+    RETURN_NAMES = ()
     FUNCTION = "generate_subject"
     CATEGORY = "CyberRealistic Pony"
 
@@ -811,10 +1196,33 @@ class CR_Pony_Subject_Male:
         r_eyes = get_smart_random(EYE_COLORS, seed + 7) if eye_color == "Random" else eye_color
         r_pose = get_smart_random(ALL_POSES, seed + 9) if pose == "Random" else pose
 
+        r_age_clean = _normalize_prompt_value(r_age)
+        r_ethnicity_clean = _normalize_prompt_value(r_ethnicity)
+        r_body_clean = _normalize_prompt_value(r_body)
+        r_skin_clean = _normalize_prompt_value(r_skin)
+        r_h_color_clean = _normalize_prompt_value(r_h_color)
+        r_h_style_clean = _normalize_prompt_value(r_h_style)
+        r_eyes_clean = _format_eye_value(r_eyes)
+
         noun = "man"
-        eth_str = f"{r_ethnicity} {noun}" if r_ethnicity != "Caucasian" else noun
-        hair_part = "" if "hair" in r_h_style.lower() else " hair"
-        prompt = f"({eth_str}, {r_age} years old:1.1), {r_body}, {r_skin}, {r_h_color} {r_h_style}{hair_part}, {r_eyes} eyes"
+        eth_str = noun if not r_ethnicity_clean or r_ethnicity_clean in {"Caucasian"} else f"{r_ethnicity_clean} {noun}"
+        hair_part = "" if r_h_style_clean and "hair" in r_h_style_clean.lower() else " hair" if r_h_style_clean else ""
+        prompt_parts = [eth_str]
+        if r_age_clean:
+            prompt_parts.append(f"{r_age_clean} years old:1.1")
+        if r_body_clean:
+            prompt_parts.append(r_body_clean)
+        if r_skin_clean:
+            prompt_parts.append(r_skin_clean)
+        if r_h_color_clean and r_h_style_clean:
+            prompt_parts.append(f"{r_h_color_clean} {r_h_style_clean}{hair_part}")
+        elif r_h_style_clean:
+            prompt_parts.append(r_h_style_clean)
+        elif r_h_color_clean:
+            prompt_parts.append(r_h_color_clean)
+        if r_eyes_clean:
+            prompt_parts.append(r_eyes_clean)
+        prompt = "(" + ", ".join(part for part in prompt_parts if part and part != "()") + ")"
 
         clothing_tags = []
         r_full_outfit = get_smart_random(FULL_OUTFITS, seed + 8) if full_outfit == "Random" else full_outfit
@@ -841,7 +1249,9 @@ class CR_Pony_Subject_Male:
         if clothing_tags:
             prompt += f", wearing {', '.join(clothing_tags)}"
 
-        prompt += f", {r_pose}"
+        feature_parts = []
+        if r_pose and r_pose not in ["Random", "None"]:
+            feature_parts.append(r_pose)
 
         def _resolve_feature(choice, data, offset):
             if not choice:
@@ -858,18 +1268,40 @@ class CR_Pony_Subject_Male:
 
         for feat in [r_leg, r_butt, r_face, r_expr, r_hlen]:
             if feat and feat not in ["Random", "None"]:
-                prompt += f", {feat}"
+                feature_parts.append(feat)
 
-        if extra_clothing_tags.strip():
-            prompt += f", {extra_clothing_tags.strip()}"
+        extra_custom_parts = []
         if custom_tags.strip():
-            prompt += f", {custom_tags.strip()}"
+            for raw in [part.strip() for part in custom_tags.split(',')]:
+                if not raw:
+                    continue
+                lowered = raw.lower()
+                if raw in NSFW_MODIFIERS or lowered in {"pussy", "vagina", "anus", "ass", "penis", "balls", "nipple", "nipples", "genitals", "genitalia", "clitoris", "labia"}:
+                    feature_parts.append(raw)
+                else:
+                    extra_custom_parts.append(raw)
 
         if nsfw_modifiers:
             mods = random.sample(NSFW_MODIFIERS, 2)
-            prompt += f", {', '.join(mods)}"
-            prompt += ", penis, balls"
+            for mod in mods:
+                feature_parts.append(mod)
+            feature_parts.extend(["penis", "balls"])
 
+        if feature_parts:
+            clean_parts = _clean_tag_list(feature_parts)
+            if clean_parts:
+                prompt += f", ({', '.join(clean_parts)})"
+
+        if extra_clothing_tags.strip():
+            cleaned_extra = ", ".join(_clean_tag_list([tag.strip() for tag in extra_clothing_tags.split(',')]))
+            if cleaned_extra:
+                prompt += f", {cleaned_extra}"
+        if extra_custom_parts:
+            clean_custom = _clean_tag_list(extra_custom_parts)
+            if clean_custom:
+                prompt += f", {', '.join(clean_custom)}"
+
+        print(f"[CyberRealistic Pony Male Subject] {prompt}")
         return (prompt,)
 
 class CR_Pony_Master:
@@ -902,8 +1334,8 @@ class CR_Pony_Master:
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("positive_prompt", "negative_prompt")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text_output",)
     FUNCTION = "generate_master"
     CATEGORY = "CyberRealistic Pony"
 
@@ -911,7 +1343,8 @@ class CR_Pony_Master:
                        sex_act="None", sex_position="None",
                        score_scheme="default high", source_bias="None", strong_anime_bias=False,
                        style_preset="None",
-                       subject_1=None, subject_2=None, subject_3=None, subject_4=None):
+                       subject_1=None, subject_2=None, subject_3=None, subject_4=None,
+                       photo_boost=False):
 
         random.seed(seed)
 
@@ -943,12 +1376,28 @@ class CR_Pony_Master:
         elif style_preset == "studio_glamour":
             style_tags.append("studio glamour, beauty lighting")
 
-        header_parts = [base_score, rating, ", ".join(source_tags), quality]
+        header_parts = [base_score, rating]
+        if photo_boost:
+            header_parts.append(PHOTO_BOOST_POTION)
+        header_parts.extend([", ".join(source_tags), quality])
         if style_tags:
             header_parts.append(", ".join(style_tags))
         pos = f"{', '.join(header_parts)}, "
 
-        # 2. Sex Acts (NSFW) — appear early in prompt, weighted by scheme
+        # 2. Count Logic & Subject Collection (only add count tags that match actual subjects)
+        subjects = [s for s in [subject_1, subject_2, subject_3, subject_4] if s and str(s).strip()]
+        count = len(subjects)
+
+        creature_terms = [
+            "centaur", "lycanthrope", "werewolf", "monster", "griffin", "dragon",
+            "shark", "minotaur", "satyr", "faun", "naga", "mermaid", "merman",
+            "bear", "panther", "stallion", "mare", "jackalfolk", "ursine", "anubis",
+            "equine", "canine", "wolf", "horse"
+        ]
+        combined_subject_text = " ".join(subjects).lower()
+        duo_creature_mode = count >= 2 and any(term.lower() in combined_subject_text for term in creature_terms)
+
+        # 3. Sex Acts (NSFW) — appear early in prompt, weighted by scheme
         if nsfw_mode:
             r_act = get_smart_random(SEX_ACTS, seed + 3, exclude_none=True) if sex_act == "Random" else sex_act
             r_pos = get_smart_random(SEX_POSITIONS, seed + 4, exclude_none=True) if sex_position == "Random" else sex_position
@@ -963,9 +1412,10 @@ class CR_Pony_Master:
             if r_pos and r_pos != "None":
                 pos += f"({r_pos}:{pos_weight}), "
 
-        # 3. Count Logic & Subject Collection (only add count tags that match actual subjects)
-        subjects = [s for s in [subject_1, subject_2, subject_3, subject_4] if s and str(s).strip()]
-        count = len(subjects)
+            if duo_creature_mode or count >= 2:
+                pos += "2creatures, duo, explicit deep coupling, intimate positions, intense passion, dynamic muscle tension, detailed equine and canine anatomy, "
+                pos += "flared_knot_at_base, thick_glans_ridge, large testicles, prominent pulsing veins, "
+
 
         # Count by gender: avoid "man" matching inside "woman"
         def _is_girl(s):
@@ -1018,10 +1468,17 @@ class CR_Pony_Master:
             # Drop explicit anime/cartoon negatives
             neg_sources = ["source_furry"]
 
-        neg = f"score_4, score_5, score_6, {', '.join(neg_sources)}, 3d, illustration, sketch, painting, cartoon, anime, grayscale, monochrome, text, watermark"
+        neg = (
+            "canine_face, dog_face, wolf_face, snout, muzzle, animal_face, anthro_face, furry_face, "
+            "human_penis, human_genitalia, uncut_penis, circumcised_penis, human_pussy, human_vagina, human_anus, "
+            "score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, "
+            "vector art, 2d drawing, 3d render, cgi, digital painting, illustration, drawing, sketch, blurry, low quality, "
+            "deformed, mutated"
+        )
         if not nsfw_mode:
             neg += ", nude, nipples, pussy, penis, sex, nsfw"
 
+        print(f"[CyberRealistic Pony Master Prompt] {pos}")
         return (pos, neg)
 
 # --- MAPPINGS ---
