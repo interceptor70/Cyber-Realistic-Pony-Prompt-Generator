@@ -1098,7 +1098,7 @@ class PromptGui:
             else:
                 prompt_values["lead_token"] = gender_value
 
-            prompt_values["setup_group"] = self.person_count_var.get()
+            #prompt_values["setup_group"] = self.person_count_var.get()
             if prompt_values.get("body_type") in {"", "None", "Random"}:
                 prompt_values["body_type"] = ""
 
@@ -1116,7 +1116,21 @@ class PromptGui:
             subject_prompts = [default_p]
             sub1_prompt = default_p
 
-        prompt_base = " BREAK ".join(subject_prompts) if self.use_break_var.get() else ", ".join(subject_prompts)
+        # Wir holen uns einfach exakt den Text, der im Dropdown ausgewählt ist
+        setup_val = (self.person_count_var.get() or "").strip()
+        
+        # Wenn ein Wert da ist, hängen wir ein Komma ran, sonst bleibt es leer
+        if setup_val and setup_val != "None":
+            global_tag = f"{setup_val}, "
+        else:
+            global_tag = ""
+
+        # Verbinde die einzelnen Personen-Klammern sauber miteinander
+        subjects_str = " BREAK ".join(subject_prompts) if self.use_break_var.get() else ", ".join(subject_prompts)
+        
+        # Setze den ausgewählten Setup-Wert ganz an den Anfang VOR die Personen
+        prompt_base = f"{global_tag}{subjects_str}"
+
 
         custom_tags_text = self.custom_tags.get("1.0", tk.END).strip()
         extra_clothing_text = self.extra_clothing_tags.get("1.0", tk.END).strip()

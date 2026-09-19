@@ -35,15 +35,20 @@ Spezies_Liste = [
     "weretiger", "werewolf"
 ]
 
-GENDERS = Anatomie_Liste
-ALL_BODY_TYPES = Spezies_Liste
+# Erst eine echte Liste für das Geschlecht erstellen:
+Echtes_Geschlecht_Liste = ["None", "male", "female", "hermaphrodite", "androgynous"]
+
+# Jetzt die Variablen richtig an das Interface übergeben:
+GENDERS = Echtes_Geschlecht_Liste
+ALL_BODY_TYPES = Spezies_Liste + Anatomie_Liste
+
 
 RATINGS = ["rating_safe", "rating_questionable", "rating_explicit"]
 
 PHOTO_BOOST_POTION = (
-    "award-winning photorealistic 8k portrait, highly detailed raw photo, "
-    "shot on iPhone 15 Pro, 35mm lens, authentic human skin texture with pores and goosebumps, "
-    "realistic heavy muscle shading, natural studio lighting, masterfully integrated"
+    "masterpiece, highly detailed, award-winning illustration, vibrant colors, "
+    "realistic heavy muscle shading, cinematic lighting, masterfully integrated, "
+    "sharp focus, volumetric lighting, rich textures"
 )
 
 SCORE_SCHEMES = [
