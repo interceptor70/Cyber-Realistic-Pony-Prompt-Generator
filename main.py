@@ -72,32 +72,28 @@ def compute_prompt_checksum(state):
     except Exception:
         return ""
 
-def apply_settings_state_from_base64(self, base64_code):
-    """
-    Liest den Base64-Teil-Code rückwärts ein und stellt alle 
-    Dropdowns und Karteikarten im UI wieder her.
-    """
-    if not base64_code or not base64_code.strip():
-        return False
-        
-    try:
-        # 1. Den Base64-Text wieder in Binärdaten umwandeln
-        b64_bytes = base64_code.strip().encode("utf-8")
-        compressed_data = base64.urlsafe_b64decode(b64_bytes)
-        
-        # 2. Die Komprimierung wieder entpacken
-        json_str = zlib.decompress(compressed_data).decode("utf-8")
-        
-        # 3. Den Text wieder als echtes Python-Dictionary einlesen
-        state = json.loads(json_str)
-        
-        # 4. Deine funktionierende Lade-Funktion füttern
-        self.apply_settings_state(state)
-        return True
-    except Exception:
-        from tkinter import messagebox
-        messagebox.showerror("Code ungültig", "Dieser Checksummen-Code ist beschädigt oder gehört nicht zu diesem Programm.")
-        return False
+    def apply_settings_state_from_base64(self, base64_code):
+        if not base64_code or not base64_code.strip():
+            return False
+            
+        try:
+            b64_bytes = base64_code.strip().encode('utf-8')
+            compressed_data = base64.urlsafe_b64decode(b64_bytes)
+            json_str = zlib.decompress(compressed_data).decode('utf-8')
+            state = json.loads(json_str)
+            
+            # 1. Zuerst lädt dein funktionierender Original-Code Person 1, 2 und die Szene
+            self.apply_settings_state(state)
+            
+            # 2. Direkt danach lädt unser neuer, sicherer Helfer Person 3 und 4 nach!
+            self.restore_additional_tabs_safely(state)
+            
+            return True
+        except Exception:
+            from tkinter import messagebox
+            messagebox.showerror("Code ungültig", "Dieser Checksummen-Code ist beschädigt.")
+            return False
+
 
 
 
@@ -1028,16 +1024,13 @@ class PromptGui:
             messagebox.showerror("Invalid seed", "Seed must be an integer.")
             return
 
-        # --- CHECKSUMMEN-BLOCK (MUSS ERHALTEN BLEIBEN) ---
+          # --- GLOBALER CHECKSUMMEN-BLOCK (SPEICHERT ALLE TABS & OPTIONEN) ---
         state_for_checksum = {
             "mode": self.mode_var.get(),
             "seed": self.seed_var.get(),
             "person_count": self.person_count_var.get(),
             "nsfw": bool(self.nsfw_var.get()),
-            "subject_2_nsfw": bool(self.subject_2_nsfw_var.get()),
             "photo_boost": bool(self.photo_boost_var.get()),
-            "nsfw_modifier": self.nsfw_modifier_var.get(),
-            "subject_2_nsfw_modifier": self.subject_2_nsfw_modifier_var.get(),
             "rating": self.rating_var.get(),
             "score_scheme": self.score_scheme_var.get(),
             "location": self.location_var.get(),
@@ -1048,21 +1041,51 @@ class PromptGui:
             "use_break": bool(self.use_break_var.get()),
             "custom_tags": self.custom_tags.get("1.0", tk.END).strip(),
             "extra_clothing_tags": self.extra_clothing_tags.get("1.0", tk.END).strip(),
-            "duo_second_gender": self.duo_second_gender_var.get(),
-            "duo_second_pose": self.duo_second_pose_var.get(),
-            "duo_second_expression": self.duo_second_expression_var.get(),
-            "duo_second_body_type": self.duo_second_body_type_var.get(),
+            "person_tabs_data": {}  # Speichert alle Karteikarten-Reiter dynamisch
         }
-        for key, widget in self.field_widgets.items():
-            state_for_checksum[f"field_{key}"] = widget.get()
-        for key, widget in self.duo_field_widgets.items():
-            state_for_checksum[f"duo_{key}"] = widget.get()
 
+        # Wir lesen alle aktiven Tabs nacheinander aus
+        active_person_count = self._get_person_setup_count()
+        for person_index in range(1, active_person_count + 1):
+            tab_data = {}
+            
+            if person_index == 1:
+                for key, widget in self.field_widgets.items():
+                    tab_data[key] = widget.get()
+                tab_data["nsfw_modifier"] = self.nsfw_modifier_var.get()
+                    
+            elif person_index == 2:
+                for key, widget in self.duo_field_widgets.items():
+                    tab_data[key] = widget.get()
+                tab_data["nsfw_modifier"] = self.subject_2_nsfw_modifier_var.get()
+                # Falls Bondage bei Person 2 aktiv ist, mitspeichern
+                if hasattr(self, 'subject_2_bondage_var'):
+                    tab_data["bondage"] = self.subject_2_bondage_var.get()
+                elif hasattr(self, 'duo_second_bondage_var'):
+                    tab_data["bondage"] = self.duo_second_bondage_var.get()
+                    
+            else:
+                # Holt die Werte für Person 3, 4 etc. dynamisch aus den Tab-Strukturen
+                widget_map = self.person_tab_widgets.get(person_index, {})
+                for key, widget in widget_map.items():
+                    tab_data[key] = widget.get()
+                
+                var_map = self.person_tab_var_map.get(person_index, {})
+                if "nsfw_modifier" in var_map:
+                    tab_data["nsfw_modifier"] = var_map["nsfw_modifier"].get()
+                if "bondage" in var_map:
+                    tab_data["bondage"] = var_map["bondage"].get()
+
+            # Ordne die gesammelten Daten dem jeweiligen Tab-Index zu
+            state_for_checksum["person_tabs_data"][str(person_index)] = tab_data
+
+        # Berechnet den fertigen, allumfassenden Base64-Teil-Code
         current_checksum = compute_prompt_checksum(state_for_checksum)
         self.checksum_store[current_checksum] = state_for_checksum
         self.prompt_checksum_var.set(current_checksum)
         self.prompt_checksum_input_var.set(current_checksum)
-        # --------------------------------------------------
+        # -------------------------------------------------------------------
+
 
         active_person_count = self._get_person_setup_count()
         subject_prompts = []
@@ -1139,6 +1162,17 @@ class PromptGui:
             prompt_base = f"{prompt_base}, {custom_tags_text}"
         if extra_clothing_text:
             prompt_base = f"{prompt_base}, {extra_clothing_text}"
+
+        # --- REPARATUR: SEX ACT & POSITION EINFÜGEN ---
+        sex_act_text = self.sex_act_var.get().strip()
+        sex_position_text = self.sex_position_var.get().strip()
+
+        if sex_act_text and sex_act_text not in {"None", "Random"}:
+            prompt_base = f"{prompt_base}, {sex_act_text}"
+        if sex_position_text and sex_position_text not in {"None", "Random"}:
+            prompt_base = f"{prompt_base}, {sex_position_text}"
+        # ----------------------------------------------
+
 
         final_positive_prompt = attach_scene_metadata(
             prompt_base,
@@ -1278,3 +1312,35 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+    def restore_additional_tabs_safely(self, state):
+        """
+        Diese Funktion läuft völlig unabhängig und lädt die Daten 
+        für Person 3 und 4, ohne die Hauptfunktion zu gefährden.
+        """
+        try:
+            if not isinstance(state, dict):
+                return
+                
+            tabs_data = state.get("person_tabs_data", {})
+            if isinstance(tabs_data, dict) and tabs_data:
+                for idx_str, data in tabs_data.items():
+                    person_index = int(idx_str)
+                    
+                    # Person 1 und 2 wurden bereits geladen, wir füllen nur 3 und 4 auf
+                    if person_index > 2:
+                        if hasattr(self, 'person_tab_widgets'):
+                            widget_map = self.person_tab_widgets.get(person_index, {})
+                            for key, val in data.items():
+                                if key in widget_map:
+                                    widget_map[key].set(str(val))
+                        
+                        if hasattr(self, 'person_tab_var_map'):
+                            var_map = self.person_tab_var_map.get(person_index, {})
+                            if "nsfw_modifier" in data and "nsfw_modifier" in var_map:
+                                var_map["nsfw_modifier"].set(str(data["nsfw_modifier"]))
+                            if "bondage" in data and "bondage" in var_map:
+                                var_map["bondage"].set(str(data["bondage"]))
+        except Exception:
+            pass
