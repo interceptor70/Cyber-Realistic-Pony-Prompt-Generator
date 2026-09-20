@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import main
@@ -23,3 +24,23 @@ def test_load_prompt_from_file_handles_missing_negative(tmp_path):
 
     assert loaded_positive == "only positive text"
     assert loaded_negative == "-"
+
+
+def test_load_checksum_state_from_settings_recovers_stored_checksum(tmp_path):
+    settings_path = tmp_path / "prompt_settings.json"
+    state = {
+        "mode": "subject",
+        "seed": "42",
+        "person_count": "solo",
+        "nsfw": False,
+        "custom_tags": "test tag",
+    }
+    checksum = main.compute_prompt_checksum(state)
+    settings_path.write_text(
+        json.dumps({"checksum_store": {checksum: state}}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    loaded_state = main.load_checksum_state_from_settings(settings_path, checksum)
+
+    assert loaded_state == state
