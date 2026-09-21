@@ -1,6 +1,48 @@
 import random
 
 
+NEGATIVE_WATERMARK_BLOCKERS = [
+    "watermark",
+    "logo",
+    "text",
+    "signature",
+    "letters",
+    "trademark",
+    "copyright",
+    "stamp",
+    "URL",
+    "website",
+    "username",
+]
+
+
+def merge_negative_prompt_tags(base_prompt=None, *tag_groups):
+    watermark_keys = {tag.lower() for tag in NEGATIVE_WATERMARK_BLOCKERS}
+    merged_tags = []
+    seen_keys = set()
+
+    def add_group(group):
+        if not group:
+            return
+        items = group.split(",") if isinstance(group, str) else group
+        for item in items:
+            text = str(item).strip()
+            if not text or text == "-":
+                continue
+            key = text.lower()
+            if key in watermark_keys or key in seen_keys:
+                continue
+            seen_keys.add(key)
+            merged_tags.append(text)
+
+    add_group(base_prompt)
+    for tag_group in tag_groups:
+        add_group(tag_group)
+
+    merged_tags.extend(NEGATIVE_WATERMARK_BLOCKERS)
+    return ", ".join(merged_tags) if merged_tags else ", ".join(NEGATIVE_WATERMARK_BLOCKERS)
+
+
 def get_sorted_list(original_list):
     if original_list is None:
         return []
@@ -84,16 +126,43 @@ ETHNICITIES = [
 ]
 
 SKIN_TYPES = [
-    "Random",
-    "fur", "fluffy fur", "soft fur", "thick fur", "short fur", "long fur", "underfur", "mane",
-    "feathered", "feathers", "plumage", "scales", "scaly", "smooth scales", "rough scales",
-    "skin", "smooth skin", "soft skin", "shiny skin", "wet skin", "chitin", "exoskeleton",
-    "bark", "wooden", "slimy", "wet", "glossy", "translucent", "see-through", "patterned fur",
-    "spots", "stripes", "markings", "two-tone fur", "multicolored fur",
-    "pale skin", "fair skin", "tan skin", "dark skin", "olive skin",
-    "freckled skin", "textured skin with pores", "oily skin", "sweaty skin",
-    "goosebumps", "sun-damaged skin", "perfect skin", "light skin", "brown skin",
-    "black skin", "body paint", "tattoo"
+    "None",
+    "smooth skin",
+    "soft skin",
+    "shiny skin",
+    "wet skin",
+    "pale skin",
+    "fair skin",
+    "tan skin",
+    "dark skin",
+    "olive skin",
+    "freckled skin",
+    "textured skin with pores",
+    "oily skin",
+    "sweaty skin",
+    "goosebumps",
+    "sun-damaged skin",
+    "wrinkled skin",
+    "light skin",
+    "brown skin",
+    "black skin",
+]
+
+SPECIAL_SKIN_TYPES = [
+    "None",
+    "fluffy fur",
+    "thick fur",
+    "short fur",
+    "rough fur",
+    "wet fur",
+    "shaggy fur",
+    "spotted fur",
+    "striped fur",
+    "smooth scales",
+    "reptilian scales",
+    "dragon scales",
+    "soft feathers",
+    "glossy feathers",
 ]
 
 HAIR_COLORS = [
@@ -729,6 +798,17 @@ def build_subject_prompt_from_ui(values):
     if skin:
         parts.append(skin)
 
+    special_skin = pick("special_skin_type")
+    if not special_skin:
+        person_index = str(values.get("person_index", "")).strip()
+        if person_index:
+            dynamic_key = f"person_{person_index}_special_skin"
+            dynamic_value = values.get(dynamic_key, "")
+            if not is_ignored(dynamic_value):
+                special_skin = str(dynamic_value).strip()
+    if special_skin:
+        parts.append(special_skin)
+
     hair_color = pick("hair_color")
     hair_style = pick("hair_style")
     if hair_color and hair_style:
@@ -759,6 +839,10 @@ def build_subject_prompt_from_ui(values):
     bondage = values.get("bondage_restraint", "")
     if not is_ignored(bondage):
         parts.append(bondage)
+
+    custom_tags = pick("custom_tags")
+    if custom_tags:
+        parts.append(custom_tags)
 
     prompt = "(" + ", ".join(parts) + ")"
     return prompt
@@ -1482,6 +1566,8 @@ class CR_Pony_Master:
         )
         if not nsfw_mode:
             neg += ", nude, nipples, pussy, penis, sex, nsfw"
+
+        neg = merge_negative_prompt_tags(neg)
 
         print(f"[CyberRealistic Pony Master Prompt] {pos}")
         return (pos, neg)

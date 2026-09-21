@@ -1,5 +1,6 @@
 import argparse
 import hashlib
+import re
 import sys
 import base64
 import json
@@ -11,6 +12,9 @@ from tkinter import filedialog, messagebox, simpledialog
 
 import nodes as pony_nodes
 from nodes import CR_Pony_Subject, CR_Pony_Master
+
+
+NEGATIVE_WATERMARK_BLOCKERS = pony_nodes.NEGATIVE_WATERMARK_BLOCKERS
 
 
 def sort_combo_values(values):
@@ -106,29 +110,209 @@ def append_bondage_tag_standalone(bondage_var_obj, text_widget):
         print(f"Fehler: {e}")
 
 
-PREVIEW_NSWF_TAGS = list(dict.fromkeys([
-    *pony_nodes.NSFW_MODIFIERS,
-    "detailed anatomy",
-    "accurate anatomy",
-    "correct anatomy",
-    "realistic anatomy",
-    "stylized anatomy",
-    "anatomically correct",
-    "detailed genitals",
-    "realistic genitals",
-    "soft shading",
-    "detailed shading",
-    "wet",
-    "shiny",
-    "glossy",
-    "aroused",
-    "excited",
-    "muscular definition",
-    "muscular chest",
-    "defined abs",
-    "soft belly",
-    "plush thighs",
-]))
+PREVIEW_NSWF_TAGS = [
+    tag
+    for tag in dict.fromkeys([
+        *pony_nodes.NSFW_MODIFIERS,
+        "detailed anatomy",
+        "accurate anatomy",
+        "correct anatomy",
+        "realistic anatomy",
+        "stylized anatomy",
+        "anatomically correct",
+        "detailed genitals",
+        "realistic genitals",
+        "soft shading",
+        "detailed shading",
+        "wet",
+        "shiny",
+        "glossy",
+        "aroused",
+        "excited",
+        "muscular definition",
+        "muscular chest",
+        "defined abs",
+        "soft belly",
+        "plush thighs",
+    ])
+    if "fur" not in str(tag).lower()
+]
+
+FERAL_POSITIVE_TAGS = [
+    "detailed animal fur",
+    "thick fur texture",
+    "individual fur strands",
+    "no human",
+    "no anthro",
+    "no person",
+]
+
+FERAL_NEGATIVE_TAGS = [
+    "human",
+    "person",
+    "man",
+    "woman",
+    "anthro",
+    "anthropomorphic",
+    "furry",
+    "humanoid",
+    "face",
+    "hands",
+    "fingers",
+    "bipedal",
+    "standing upright",
+]
+
+
+def compose_negative_prompt(base_prompt="-", *extra_tag_groups):
+    return pony_nodes.merge_negative_prompt_tags(base_prompt, *extra_tag_groups)
+
+
+def should_auto_enable_canvas_detail(value):
+    return not pony_nodes._is_ignored_value(value)
+
+
+FELL_KREATUREN = ["anthro", "were", "bipedal wolf", "kitsune", "lycanthrope", "tanuki", "minotaur", "taur", "centaur", "faun", "satyr", "incubus", "succubus", "catgirl", "bunnygirl"]
+SCHUPPEN_KREATUREN = ["alligator", "crocodile", "draconic", "dragon", "drake", "lizardman", "reptilian", "serpent", "snake", "lamia", "naga", "fish", "mermaid", "merfolk", "merman", "shark", "amphibian", "kappa"]
+FEDER_KREATUREN = ["angel", "avian", "bird", "celestial", "griffin", "gryphon", "harpy", "tengu"]
+INSEKTEN_KREATUREN = ["arachnid", "arthropod", "insect", "ant", "bee", "wasp", "spider"]
+GLATTE_KREATUREN = ["slime", "gelatinous", "amorphous", "plant", "flora", "alraune", "octopus", "cephalopod", "tentacle"]
+METALL_KREATUREN = ["robot", "mecha", "mechanical", "cyborg"]
+KNOCHEN_KREATUREN = ["skeleton", "undead", "zombie"]
+
+PONY_LOGIC_GROUPS = {
+    "fur": FELL_KREATUREN,
+    "scales": SCHUPPEN_KREATUREN,
+    "feathers": FEDER_KREATUREN,
+    "insects": INSEKTEN_KREATUREN,
+    "smooth": GLATTE_KREATUREN,
+    "metal": METALL_KREATUREN,
+    "bones": KNOCHEN_KREATUREN,
+}
+
+
+def _build_pony_logic_search_text(values):
+    body_type = str(values.get("body_type") or "").strip().lower()
+    species = str(values.get("species") or "").strip().lower()
+    return " ".join(part for part in (body_type, species) if part)
+
+
+def _matches_pony_logic_group(search_text, keywords):
+    for keyword in keywords:
+        pattern = rf"(?<!\w){re.escape(keyword)}(?!\w)"
+        if re.search(pattern, search_text):
+            return True
+    return False
+
+
+def _get_special_skin_family(value):
+    skin_text = str(value or "").strip().lower()
+    if pony_nodes._is_ignored_value(value):
+        return None
+    if "fur" in skin_text:
+        return "fur"
+    if "scale" in skin_text:
+        return "scales"
+    if "feather" in skin_text:
+        return "feathers"
+    return None
+
+
+def verify_pony_logic(values):
+    search_text = _build_pony_logic_search_text(values)
+    body_type = str(values.get("body_type") or "").strip()
+    special_skin_type = str(values.get("special_skin_type") or "").strip()
+    body_type_lower = body_type.lower()
+    skin_family = _get_special_skin_family(special_skin_type)
+
+    if skin_family is None:
+        return None
+
+    group_matches = {
+        name: _matches_pony_logic_group(search_text, keywords)
+        for name, keywords in PONY_LOGIC_GROUPS.items()
+    }
+    belongs_to_creature_group = any(group_matches.values())
+
+    if body_type_lower == "human":
+        return f"❌ Konflikt: Der Body Type '{body_type}' verträgt sich nicht mit dem Special Skin Type '{special_skin_type}'!"
+
+    if not belongs_to_creature_group:
+        return f"❌ Konflikt: Du hast '{special_skin_type}' ausgewählt, aber der Body Type '{body_type}' liefert dem Modell keine passende Kreatur (z. B. draconic, anthro)!"
+
+    if group_matches["insects"] and skin_family in {"fur", "feathers"}:
+        return f"❌ Konflikt: Der Body Type '{body_type}' verträgt sich nicht mit dem Special Skin Type '{special_skin_type}'!"
+
+    if group_matches["scales"] and skin_family in {"fur", "feathers"}:
+        return f"❌ Konflikt: Der Body Type '{body_type}' verträgt sich nicht mit dem Special Skin Type '{special_skin_type}'!"
+
+    if group_matches["feathers"] and skin_family == "scales":
+        return f"❌ Konflikt: Der Body Type '{body_type}' verträgt sich nicht mit dem Special Skin Type '{special_skin_type}'!"
+
+    if group_matches["metal"] and skin_family in {"fur", "feathers"}:
+        return f"❌ Konflikt: Der Body Type '{body_type}' verträgt sich nicht mit dem Special Skin Type '{special_skin_type}'!"
+
+    return None
+
+
+def evaluate_pony_model_status(values):
+    body_type = str(values.get("body_type") or "").strip()
+    gender = str(values.get("gender") or "").strip()
+    camera = str(values.get("camera") or "").strip()
+    location = str(values.get("location") or "").strip()
+
+    body_type_lower = body_type.lower()
+    gender_lower = gender.lower()
+    camera_lower = camera.lower()
+
+    human_body_selected = body_type_lower == "human"
+    feral_gender_selected = gender_lower.startswith("feral")
+    close_up_camera_selected = "close-up" in camera_lower or "macro" in camera_lower
+    location_selected = not pony_nodes._is_ignored_value(location)
+    clothing_selected = any(
+        not pony_nodes._is_ignored_value(values.get(key))
+        for key in ("full_outfit", "top_clothing", "bottom_clothing", "headwear", "shoes", "accessories")
+    )
+
+    logic_error = verify_pony_logic(values)
+    if logic_error:
+        return {
+            "level": "red",
+            "signal_color": "#c62828",
+            "text_color": "#c62828",
+            "message": logic_error,
+        }
+
+    if feral_gender_selected and clothing_selected:
+        return {
+            "level": "red",
+            "signal_color": "#c62828",
+            "text_color": "#c62828",
+            "message": "🔴 Prompt-Status: Logischer Widerspruch erkannt!",
+        }
+
+    if close_up_camera_selected and location_selected:
+        return {
+            "level": "yellow",
+            "signal_color": "#d97706",
+            "text_color": "#b45309",
+            "message": "🟡 Prompt-Status: Kamera/Location-Beschnitt möglich",
+        }
+
+    if human_body_selected or (feral_gender_selected and not clothing_selected):
+        return {
+            "level": "green",
+            "signal_color": "#2e7d32",
+            "text_color": "#2e7d32",
+            "message": "🟢 Prompt-Status: Optimal für Pony",
+        }
+
+    return {
+        "level": "green",
+        "signal_color": "#2e7d32",
+        "text_color": "#2e7d32",
+        "message": "🟢 Prompt-Status: Optimal für Pony",
+    }
 
 
 def apply_preview_tag_highlights(text_widget, prompt_text):
@@ -577,12 +761,36 @@ class PromptGui:
         self.sex_position_var = tk.StringVar(value="None")
         self.use_break_var = tk.BooleanVar(value=True)
 
+        self.special_skin_type_options = [
+            "None",
+            # --- Texturen & Längen ---
+            "fluffy fur", "thick fur", "short fur", "rough fur", "shaggy fur", "soft fur", "sleek fur", "silky fur", "long fur", "dense fur",
+            # --- Ganzkörper-Modifikatoren (Anthro / Full Body) ---
+            "full body fur", "covered in fur", "furry body", "anthropomorphic fur", "seamless fur texture",
+            # --- Muster & Zeichnungen ---
+            "spotted fur", "striped fur", "patched fur", "brindle fur", "mottled fur", "leopard print fur", "tiger stripe fur", "bi-color fur",
+            # --- Spezial-Zustände ---
+            "wet fur", "damp fur", "matted fur", "dirty fur", "glowing fur", "magic-infused fur",
+            # --- Schuppen & Federn (Fabelwesen) ---
+            "smooth scales", "reptilian scales", "dragon scales", "glowing scales", "soft feathers", "glossy feathers", "angelic feathers"
+        ]
+        self.gender_options = [
+            "None",
+            "androgynous",
+            "female",
+            "hermaphrodite",
+            "male",
+            "feral female",
+            "feral male",
+        ]
+
         self.field_values = {
-            "gender": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.GENDERS)), "human"),
+            "gender": (list(self.gender_options), "female"),
             "age": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.AGES)), "25"),
             "ethnicity": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.ETHNICITIES)), "Caucasian"),
             "body_type": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.ALL_BODY_TYPES)), "None"),
             "skin_texture": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.SKIN_TYPES)), "pale skin"),
+            "special_skin_type": (list(self.special_skin_type_options), "None"),
             "hair_color": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.HAIR_COLORS)), "platinum blonde"),
             "hair_style": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.ALL_HAIRSTYLES)), "Random"),
             "eye_color": (sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.EYE_COLORS)), "Random"),
@@ -603,6 +811,7 @@ class PromptGui:
         }
         duo_order = [
             "gender", "age", "ethnicity", "body_type", "skin_texture", "hair_color",
+            "special_skin_type",
             "hair_style", "eye_color", "full_outfit", "top_clothing", "bottom_clothing",
             "headwear", "shoes", "accessories", "pose", "breast_size", "breast_shape",
             "leg_feature", "butt_feature", "face_shape", "expression", "hair_length",
@@ -610,9 +819,7 @@ class PromptGui:
         self.duo_field_values = {}
         for key in duo_order:
             values, default = self.field_values[key]
-            if key == "gender":
-                values, default = sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.GENDERS)), "human"
-            elif key == "body_type":
+            if key == "body_type":
                 values, default = sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.ALL_BODY_TYPES)), "None"
             elif key == "pose":
                 values, default = sort_combo_values(pony_nodes.get_sorted_list(pony_nodes.ALL_POSES)), "Random"
@@ -625,6 +832,44 @@ class PromptGui:
         self.output_window = None
         self.output_positive = None
         self.output_negative = None
+        self.canvas_window = None
+        self.canvas_positive_text = None
+        self.canvas_negative_text = None
+        self.canvas_include_options = [
+            ("gender", "Gender"),
+            ("body_type", "Body Type"),
+            ("skin_texture", "Skin Texture"),
+            ("special_skin_type", "Special Skin Type"),
+            ("hair_style", "Hair Style"),
+            ("hair_color", "Hair Color"),
+            ("expression", "Expression"),
+            ("age", "Age"),
+            ("ethnicity", "Ethnicity"),
+            ("eye_color", "Eye Color"),
+            ("hair_length", "Hair Length"),
+            ("face_shape", "Face Shape"),
+            ("pose", "Pose"),
+            ("full_outfit", "Full Outfit"),
+            ("top_clothing", "Top Clothing"),
+            ("bottom_clothing", "Bottom Clothing"),
+            ("accessories", "Accessories"),
+            ("headwear", "Headwear"),
+            ("shoes", "Shoes"),
+            ("breast_size", "Breast Size"),
+            ("breast_shape", "Breast Shape"),
+            ("leg_feature", "Leg Feature"),
+            ("butt_feature", "Butt Feature"),
+        ]
+        self.canvas_include_vars = {}
+        default_canvas_enabled = {"gender", "body_type"}
+        for key, _label in self.canvas_include_options:
+            self.canvas_include_vars[key] = tk.BooleanVar(value=key in default_canvas_enabled)
+        self.canvas_weight_var = tk.StringVar(value="1.15")
+        self.canvas_denoise_var = tk.DoubleVar(value=0.65)
+        self.canvas_denoise_recommendation_label = None
+        self.pony_status_signal = None
+        self.pony_status_message = None
+        self.status_text_label = None
         self.text = None
         self.prompt_preview = None
         self.settings_path = Path(__file__).with_name("prompt_settings.json")
@@ -632,6 +877,15 @@ class PromptGui:
         self.prompt_checksum_var = tk.StringVar(value="")
         self.prompt_checksum_input_var = tk.StringVar(value="")
         self._preview_refresh_job = None
+        self.preset_combo = None
+        self.preset_info_text = None
+
+        try:
+            with open("presets.json", "r", encoding="utf-8") as f:
+                self.INPAINT_PRESET_DB = json.load(f)
+        except Exception as e:
+            print(f"Fehler beim Laden der presets.json: {e}")
+            self.INPAINT_PRESET_DB = {}
 
         for var in (
             self.mode_var,
@@ -661,6 +915,7 @@ class PromptGui:
             self.use_break_var,
         ):
             var.trace_add("write", self._queue_prompt_preview_refresh)
+        self.canvas_weight_var.trace_add("write", lambda *_: self.update_canvas_prompts())
 
         main = ttk.Frame(root, padding=12)
         main.pack(fill=tk.BOTH, expand=True)
@@ -717,6 +972,8 @@ class PromptGui:
         ttk.Button(controls_row, text="Open", command=self.open_prompt_window_if_available).pack(side=tk.LEFT, padx=(0, 8))
         ttk.Button(controls_row, text="Load", command=self.load_prompt_file).pack(side=tk.LEFT, padx=(0, 8))
         ttk.Button(controls_row, text="Reset all defaults", command=self.reset_all_person_defaults).pack(side=tk.LEFT)
+        self.invoke_canvas_button = ttk.Button(controls_row, text="Invoke Canvas", command=self.open_canvas_window)
+        self.invoke_canvas_button.pack(side=tk.LEFT, padx=(8, 0))
 
         top_bar.columnconfigure(0, weight=1)
 
@@ -754,7 +1011,7 @@ class PromptGui:
         self.duo_field_widgets["pose"].configure(textvariable=self.duo_second_pose_var)
         self.duo_field_widgets["expression"].configure(textvariable=self.duo_second_expression_var)
         self.duo_field_widgets["body_type"].configure(textvariable=self.duo_second_body_type_var)
-        self.duo_field_widgets["gender"].set("human")
+        self.duo_field_widgets["gender"].set("female")
         self.duo_field_widgets["pose"].set("Random")
         self.duo_field_widgets["expression"].set("Random")
         self.duo_field_widgets["body_type"].set("None")
@@ -783,6 +1040,58 @@ class PromptGui:
             combo.set(var.get())
             combo.grid(row=row, column=col * 2 + 1, sticky="ew", padx=(0, 12), pady=7)
 
+        scene_bg = self.root.cget("bg")
+        self.validator_frame = ttk.LabelFrame(scene_frame, text="Inpaint Cheat Sheet / Preset")
+        self.validator_frame.grid(row=0, column=4, rowspan=4, sticky="nsew", padx=20, pady=10)
+
+        validator_content = tk.Frame(self.validator_frame, bg=scene_bg)
+        validator_content.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        tk.Label(validator_content, text="Inpaint Presets:", bg=scene_bg, anchor="w", justify=tk.LEFT).pack(
+            fill="x",
+            pady=(5, 5),
+        )
+
+        self.preset_combo = ttk.Combobox(validator_content, state="readonly", width=45)
+        self.preset_combo.pack(fill="x", pady=(5, 5))
+        self.preset_combo["values"] = ["None", *sorted(list(self.INPAINT_PRESET_DB.keys()))]
+        self.preset_combo.set("None")
+        self.preset_combo.bind("<<ComboboxSelected>>", self.on_preset_change)
+
+        self.preset_info_text = tk.Text(
+            validator_content,
+            height=5,
+            width=45,
+            wrap="word",
+            bg="#f5f5f5",
+            state="disabled",
+            cursor="arrow",
+            takefocus=0,
+        )
+        self.preset_info_text.pack(fill="x", pady=(5, 5))
+
+        status_frame = tk.Frame(validator_content, bg=scene_bg)
+        status_frame.pack(fill="x", pady=(5, 5), side=tk.BOTTOM)
+
+        self.pony_status_signal = tk.Label(status_frame, width=2, height=1, bg="#2e7d32", relief=tk.SOLID, bd=1)
+        self.pony_status_signal.pack(side=tk.LEFT, anchor="n", padx=(0, 10))
+        self.pony_status_message = tk.Label(
+            status_frame,
+            text="🟢 Prompt-Status: Optimal für Pony",
+            fg="#2e7d32",
+            bg=scene_bg,
+            anchor="w",
+            justify=tk.LEFT,
+            wraplength=360,
+            width=42,
+        )
+        self.pony_status_message.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.status_text_label = self.pony_status_message
+
+        scene_frame.columnconfigure(1, weight=1)
+        scene_frame.columnconfigure(3, weight=1)
+        scene_frame.columnconfigure(4, weight=1, minsize=420)
+
         self.scene_frame = scene_frame
 
         self.load_settings()
@@ -793,8 +1102,10 @@ class PromptGui:
             self.update_duo_visibility()
             self.update_mode_visibility()
         self.mode_var.trace_add("write", lambda *_: (self.update_duo_visibility(), self.update_mode_visibility()))
-        self.person_count_var.trace_add("write", lambda *_: (self.apply_people_setup_defaults(), self.update_duo_visibility(), self.update_mode_visibility()))
+        self.person_count_var.trace_add("write", self._sync_person_count_state)
         self.nsfw_var.trace_add("write", lambda *_: self.update_mode_visibility())
+        self._update_invoke_canvas_button_state()
+        self._refresh_pony_status_indicator()
         root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def get_settings_state(self):
@@ -981,18 +1292,20 @@ class PromptGui:
             row = index // 2
             col = index % 2
             ttk.Label(parent, text=label).grid(row=row, column=col * 2, sticky="w", padx=(0, 0), pady=0)
-            combo = ttk.Combobox(parent, values=values, state="readonly", width=18)
-            combo.set(default)
+            combo_var = tk.StringVar(value=default)
+            combo = ttk.Combobox(parent, values=values, state="readonly", width=18, textvariable=combo_var)
             combo.grid(row=row, column=col * 2 + 1, sticky="ew", padx=(0, 0), pady=0)
             widget_map[key] = combo
             self._bind_widget_preview_refresh(combo)
+
+        content_row_start = (len(rows) // 2) + 1
 
         if bondage_enabled_var is None:
             bondage_enabled_var = tk.BooleanVar(value=False)
 
         if include_custom_tags:
             extras = ttk.Frame(parent)
-            extras.grid(row=(len(rows) // 2) + 1, column=0, columnspan=4, sticky="ew", pady=(12, 0))
+            extras.grid(row=content_row_start, column=0, columnspan=4, sticky="ew", pady=(12, 0))
 
             ttk.Label(extras, text="Custom tags").grid(row=0, column=0, sticky="nw", padx=(0, 4), pady=(2, 0))
             custom_tags_field = tk.Text(extras, height=2, width=42)
@@ -1011,9 +1324,9 @@ class PromptGui:
                 self.extra_clothing_tags = clothing_tags_field
 
             extras.columnconfigure(1, weight=1)
-            button_row = (len(rows) // 2) + 3
+            button_row = content_row_start + 2
         else:
-            button_row = (len(rows) // 2) + 1
+            button_row = content_row_start
 
         nsfw_row = ttk.Frame(parent)
         nsfw_row.grid(row=button_row, column=0, columnspan=4, sticky="ew", pady=(8, 0))
@@ -1207,15 +1520,15 @@ class PromptGui:
             "solo": {"gender": "female", "body_type": "human"},
             "1girl": {"gender": "female", "body_type": "human"},
             "1boy": {"gender": "male", "body_type": "human"},
-            "1other": {"gender": "other", "body_type": "human"},
+            "1other": {"gender": "androgynous", "body_type": "human"},
             "2girls": {"gender": "female", "body_type": "human"},
             "2boys": {"gender": "male", "body_type": "human"},
-            "2others": {"gender": "other", "body_type": "human"},
+            "2others": {"gender": "androgynous", "body_type": "human"},
             "3girls": {"gender": "female", "body_type": "human"},
             "3boys": {"gender": "male", "body_type": "human"},
             "multiple girls": {"gender": "female", "body_type": "human"},
             "multiple boys": {"gender": "male", "body_type": "human"},
-            "multiple others": {"gender": "other", "body_type": "human"},
+            "multiple others": {"gender": "androgynous", "body_type": "human"},
             "group": {"gender": "female", "body_type": "human"},
             "crowd": {"gender": "female", "body_type": "human"},
             "orgy": {"gender": "female", "body_type": "human"},
@@ -1335,6 +1648,19 @@ class PromptGui:
     def update_mode_visibility(self):
         self.scene_frame.pack(fill=tk.X, pady=(0, 8))
 
+    def _update_invoke_canvas_button_state(self):
+        if getattr(self, "invoke_canvas_button", None) is None:
+            return
+
+        state = "normal" if (self.person_count_var.get() or "").strip().lower() == "solo" else "disabled"
+        self.invoke_canvas_button.configure(state=state)
+
+    def _sync_person_count_state(self, *_):
+        self.apply_people_setup_defaults()
+        self.update_duo_visibility()
+        self.update_mode_visibility()
+        self._update_invoke_canvas_button_state()
+
     def _get_widget_text_fields(self, widget_map=None):
         if widget_map is None:
             widget_map = self.field_widgets
@@ -1376,11 +1702,32 @@ class PromptGui:
 
     def _refresh_live_preview(self, *_):
         try:
-            positive_prompt, _, _ = self._build_current_positive_prompt()
+            positive_prompt, _, _, _ = self._build_current_positive_prompt()
             self.update_prompt_preview(positive_prompt)
         except Exception:
             pass
+        try:
+            self._refresh_pony_status_indicator()
+        except Exception:
+            pass
         self._preview_refresh_job = None
+
+    def _get_pony_status_values(self):
+        values = {
+            "location": self.location_var.get(),
+            "camera": self.camera_var.get(),
+        }
+        for key in ("gender", "body_type", "special_skin_type", "full_outfit", "top_clothing", "bottom_clothing", "headwear", "shoes", "accessories"):
+            values[key] = self._read_widget_value(self.field_widgets.get(key))
+        return values
+
+    def _refresh_pony_status_indicator(self):
+        if self.pony_status_signal is None or self.pony_status_message is None:
+            return
+
+        status = evaluate_pony_model_status(self._get_pony_status_values())
+        self.pony_status_signal.configure(bg=status["signal_color"])
+        self.pony_status_message.configure(text=status["message"], fg=status["text_color"])
 
     def _bind_widget_preview_refresh(self, widget):
         if widget is None:
@@ -1399,11 +1746,23 @@ class PromptGui:
         if hasattr(widget, "bind"):
             widget.bind("<FocusOut>", self._queue_prompt_preview_refresh)
 
+    def _is_feral_gender(self, value):
+        return str(value or "").strip().lower().startswith("feral")
+
+    def _get_base_gender_from_value(self, value):
+        text = str(value or "").strip().lower()
+        if text == "feral female":
+            return "female"
+        if text == "feral male":
+            return "male"
+        return str(value or "").strip()
+
     def _build_current_positive_prompt(self):
         active_person_count = self._get_person_setup_count()
         subject_prompts = []
         sub1_prompt = None
         sub2_prompt = None
+        feral_mode_enabled = False
 
         for person_index in range(1, active_person_count + 1):
             if person_index == 1:
@@ -1423,7 +1782,15 @@ class PromptGui:
                 values["nsfw_modifier"] = self.person_tab_var_map.get(person_index, {}).get("nsfw_modifier", tk.StringVar(value="None")).get()
                 values["bondage_restraint"] = self.person_tab_var_map.get(person_index, {}).get("bondage", tk.StringVar(value="None")).get()
 
+            raw_gender = values.get("gender", "")
+            if self._is_feral_gender(raw_gender):
+                feral_mode_enabled = True
+
+            values[f"person_{person_index}_special_skin"] = values.get("special_skin_type", "None")
+
             prompt_values = dict(values)
+            prompt_values["person_index"] = str(person_index)
+            prompt_values["gender"] = self._get_base_gender_from_value(raw_gender)
             gender_value = (prompt_values.get("gender") or "").strip()
             if gender_value in {"", "None", "Random"}:
                 prompt_values["lead_token"] = "person"
@@ -1456,11 +1823,8 @@ class PromptGui:
         prompt_base = f"{global_tag}{subjects_str}"
 
         custom_widget, clothing_widget = self._get_widget_text_fields(self.field_widgets)
-        custom_tags_text = self._read_widget_value(custom_widget)
         extra_clothing_text = self._read_widget_value(clothing_widget)
 
-        if custom_tags_text:
-            prompt_base = f"{prompt_base}, {custom_tags_text}"
         if extra_clothing_text:
             prompt_base = f"{prompt_base}, {extra_clothing_text}"
 
@@ -1471,6 +1835,9 @@ class PromptGui:
         if sex_position_text and sex_position_text not in {"None", "Random"}:
             prompt_base = f"{prompt_base}, {sex_position_text}"
 
+        if feral_mode_enabled:
+            prompt_base = f"{prompt_base}, {', '.join(FERAL_POSITIVE_TAGS)}"
+
         final_positive_prompt = attach_scene_metadata(
             prompt_base,
             rating=self.rating_var.get(),
@@ -1480,7 +1847,324 @@ class PromptGui:
             camera=self.camera_var.get(),
             photo_boost=self.photo_boost_var.get(),
         )
-        return final_positive_prompt, sub1_prompt, sub2_prompt
+        return final_positive_prompt, sub1_prompt, sub2_prompt, feral_mode_enabled
+
+    def _build_current_master_negative_prompt(self, seed, sub1_prompt, sub2_prompt):
+        if self.mode_var.get() != "master":
+            return compose_negative_prompt("-")
+
+        node = CR_Pony_Master()
+        _, negative = node.generate_master(
+            seed=seed,
+            rating=self.rating_var.get(),
+            location=self.location_var.get(),
+            lighting=self.lighting_var.get(),
+            camera=self.camera_var.get(),
+            use_break=self.use_break_var.get(),
+            nsfw_mode=self.nsfw_var.get(),
+            sex_act=self.sex_act_var.get(),
+            sex_position=self.sex_position_var.get(),
+            score_scheme=self.score_scheme_var.get(),
+            source_bias="None",
+            strong_anime_bias=False,
+            style_preset="None",
+            subject_1=sub1_prompt,
+            subject_2=sub2_prompt,
+            subject_3=None,
+            subject_4=None,
+            photo_boost=False,
+        )
+        return compose_negative_prompt(negative)
+
+    def _build_canvas_inpaint_text(self):
+        try:
+            seed = int(self.seed_var.get())
+        except ValueError:
+            messagebox.showerror("Invalid seed", "Seed must be an integer.")
+            return None
+
+        feral_mode_enabled = self._is_feral_gender(self._read_widget_value(self.field_widgets.get("gender")))
+
+        selected_character_tags = self._get_canvas_selected_character_tags()
+        custom_character_tags = self._get_canvas_custom_tags()
+
+        node = CR_Pony_Master()
+        positive_prompt, negative_prompt = node.generate_master(
+            seed=seed,
+            rating=self.rating_var.get(),
+            location=self.location_var.get(),
+            lighting=self.lighting_var.get(),
+            camera=self.camera_var.get(),
+            use_break=self.use_break_var.get(),
+            nsfw_mode=self.nsfw_var.get(),
+            sex_act=self.sex_act_var.get(),
+            sex_position=self.sex_position_var.get(),
+            score_scheme=self.score_scheme_var.get(),
+            source_bias="None",
+            strong_anime_bias=False,
+            style_preset="None",
+            subject_1=None,
+            subject_2=None,
+            subject_3=None,
+            subject_4=None,
+            photo_boost=False,
+        )
+        positive = self._sanitize_canvas_positive_prompt(
+            positive_prompt,
+            selected_character_tags=selected_character_tags,
+            custom_character_tags=custom_character_tags,
+            seed=seed,
+            feral_mode=feral_mode_enabled,
+        )
+
+        extra_negatives = [FERAL_NEGATIVE_TAGS] if feral_mode_enabled else []
+        negative = compose_negative_prompt(negative_prompt or "-", *extra_negatives)
+
+        return positive, negative
+
+    def _get_canvas_selected_character_tags(self):
+        tags = []
+        seen = set()
+
+        for key, _label in self.canvas_include_options:
+            include_var = self.canvas_include_vars.get(key)
+            if include_var is None or not include_var.get():
+                continue
+
+            widget = self.field_widgets.get(key) if isinstance(self.field_widgets, dict) else None
+            value = self._read_widget_value(widget)
+            if pony_nodes._is_ignored_value(value):
+                continue
+
+            text = str(value).strip()
+            if key == "gender":
+                text = self._get_base_gender_from_value(text)
+            if not text:
+                continue
+
+            lowered = text.lower()
+            if lowered in seen:
+                continue
+
+            seen.add(lowered)
+            tags.append(text)
+
+        return tags
+
+    def _sync_canvas_include_defaults_from_main_fields(self):
+        for key, _label in self.canvas_include_options:
+            include_var = self.canvas_include_vars.get(key)
+            if include_var is None:
+                continue
+
+            widget = self.field_widgets.get(key) if isinstance(self.field_widgets, dict) else None
+            value = self._read_widget_value(widget)
+            include_var.set(should_auto_enable_canvas_detail(value))
+
+    def _get_canvas_custom_tags(self):
+        custom_widget, _clothing_widget = self._get_widget_text_fields(self.field_widgets)
+        raw_text = self._read_widget_value(custom_widget)
+        if not raw_text:
+            return []
+
+        tags = []
+        seen = set()
+        for part in raw_text.split(","):
+            text = re.sub(r"\s{2,}", " ", part).strip()
+            if not text:
+                continue
+            lowered = text.lower()
+            if lowered in seen:
+                continue
+            seen.add(lowered)
+            tags.append(text)
+        return tags
+
+    def _sanitize_canvas_positive_prompt(self, prompt_text, selected_character_tags=None, custom_character_tags=None, seed=0, feral_mode=False):
+        cleaned = re.sub(r"\bsolo\b", "", prompt_text or "", flags=re.IGNORECASE)
+        parts = []
+        for part in cleaned.split(","):
+            stripped = re.sub(r"\s{2,}", " ", part).strip()
+            if stripped:
+                parts.append(stripped)
+
+        allowed_tags = [str(tag).strip() for tag in (selected_character_tags or []) if str(tag).strip()]
+        custom_tags = [str(tag).strip() for tag in (custom_character_tags or []) if str(tag).strip()]
+        if custom_tags:
+            allowed_tags.extend(custom_tags)
+
+        if feral_mode:
+            allowed_tags.extend(FERAL_POSITIVE_TAGS)
+
+        if allowed_tags:
+            allowed_lower = {tag.lower() for tag in allowed_tags}
+            parts = [p for p in parts if p.lower() not in allowed_lower]
+
+            insert_index = len(parts)
+            rating_tag = (self.rating_var.get() or "").strip()
+            if rating_tag and rating_tag not in {"None", "Random"}:
+                for idx, token in enumerate(parts):
+                    if token.lower() == rating_tag.lower():
+                        insert_index = idx + 1
+                        break
+            else:
+                for idx, token in enumerate(parts):
+                    if token.lower() == "highly detailed":
+                        insert_index = idx + 1
+                        break
+
+            location_value = self.location_var.get().strip()
+            lighting_value = self.lighting_var.get().strip()
+            camera_value = self.camera_var.get().strip()
+            scene_location = pony_nodes.get_smart_random(pony_nodes.LOCATIONS, seed) if location_value == "Random" else location_value
+            scene_lighting = pony_nodes.get_smart_random(pony_nodes.LIGHTING, seed + 1) if lighting_value == "Random" else lighting_value
+            scene_camera = pony_nodes.get_smart_random(pony_nodes.CAMERAS, seed + 2) if camera_value == "Random" else camera_value
+            scene_tags = {str(tag).strip().lower() for tag in (scene_location, scene_lighting, scene_camera) if str(tag).strip()}
+
+            first_scene_index = None
+            for idx, token in enumerate(parts):
+                if token.lower() in scene_tags:
+                    first_scene_index = idx
+                    break
+
+            if first_scene_index is not None and insert_index > first_scene_index:
+                insert_index = first_scene_index
+
+            weight_value = (self.canvas_weight_var.get() or "1.15").strip()
+            if not weight_value:
+                weight_value = "1.15"
+            weighted_block = f"({', '.join(allowed_tags)}:{weight_value})"
+            parts.insert(insert_index, weighted_block)
+
+        return ", ".join(parts)
+
+    def update_canvas_prompts(self):
+        canvas_texts = self._build_canvas_inpaint_text()
+        if canvas_texts is None:
+            return
+        positive_text, negative_text = canvas_texts
+
+        if self.canvas_positive_text is not None:
+            self.canvas_positive_text.delete("1.0", tk.END)
+            self.canvas_positive_text.insert(tk.END, positive_text)
+        if self.canvas_negative_text is not None:
+            self.canvas_negative_text.delete("1.0", tk.END)
+            self.canvas_negative_text.insert(tk.END, negative_text)
+
+    def refresh_canvas_prompt_fields(self):
+        self.update_canvas_prompts()
+
+    def update_preview_text(self):
+        self._queue_prompt_preview_refresh()
+
+    def _set_readonly_info_text(self, text_widget, value):
+        if text_widget is None:
+            return
+        text_widget.configure(state="normal")
+        text_widget.delete("1.0", tk.END)
+        text_widget.insert("1.0", str(value or ""))
+        text_widget.configure(state="disabled")
+
+    def _get_preset_value(self, preset, keys, default_value):
+        for key in keys:
+            if key in preset:
+                return preset.get(key)
+        return default_value
+
+    def on_preset_change(self, event):
+        if self.preset_combo is None:
+            return
+
+        preset_key = (self.preset_combo.get() or "").strip()
+        if preset_key in {"", "None"}:
+            self._set_readonly_info_text(self.preset_info_text, "")
+            self.update_preview_text()
+            return
+
+        preset = self.INPAINT_PRESET_DB.get(preset_key, {})
+        if not isinstance(preset, dict):
+            return
+
+        body_type_value = str(self._get_preset_value(preset, ["body_type", "Body Type", "bodyType"], "None"))
+        special_skin_value = str(self._get_preset_value(preset, ["special_skin_type", "special_skin", "Special Skin Type", "specialSkinType"], "None"))
+        positive_prompt_value = str(self._get_preset_value(preset, ["positive", "positive_prompt", "Positive Prompt", "positivePrompt"], ""))
+        custom_tags_value = str(self._get_preset_value(preset, ["custom_tags", "Custom Tags", "customTags"], positive_prompt_value))
+        negative_prompt_value = str(self._get_preset_value(preset, ["negative", "negative_prompt", "Negative Prompt", "negativePrompt"], "-"))
+        info_value = str(self._get_preset_value(preset, ["info", "Info"], ""))
+
+        denoise_raw = self._get_preset_value(
+            preset,
+            ["denoise", "denoise_strength", "denoising", "denoising_strength", "Denoising Strength"],
+            0.65,
+        )
+        try:
+            denoise_value = float(denoise_raw)
+        except (TypeError, ValueError):
+            denoise_value = 0.65
+
+        if "body_type" in self.field_widgets:
+            self.field_widgets["body_type"].set(body_type_value)
+        if "special_skin_type" in self.field_widgets:
+            self.field_widgets["special_skin_type"].set(special_skin_value)
+
+        self.canvas_denoise_var.set(denoise_value)
+        self.update_denoising_recommendation(denoise_value)
+
+        custom_tags_widget, _ = self._get_widget_text_fields(self.field_widgets)
+        if custom_tags_widget is not None:
+            if isinstance(custom_tags_widget, tk.Text):
+                custom_tags_widget.delete("1.0", tk.END)
+                custom_tags_widget.insert("1.0", custom_tags_value)
+            else:
+                custom_tags_widget.delete(0, tk.END)
+                custom_tags_widget.insert(0, custom_tags_value)
+
+        if self.canvas_positive_text is not None:
+            self.canvas_positive_text.delete("1.0", tk.END)
+            self.canvas_positive_text.insert("1.0", positive_prompt_value)
+
+        if self.canvas_negative_text is not None:
+            self.canvas_negative_text.delete("1.0", tk.END)
+            self.canvas_negative_text.insert("1.0", negative_prompt_value if negative_prompt_value else "-")
+
+        self._set_readonly_info_text(self.preset_info_text, info_value)
+        self.update_preview_text()
+
+    def update_denoising_recommendation(self, val):
+        try:
+            value = float(val)
+        except (TypeError, ValueError):
+            value = 0.65
+
+        if value <= 0.15:
+            message = "🔍 [0.0 - 0.15] Minimal: Nur leichte Fehlerkorrektur (Stil & Textur bleiben identisch)"
+            color = "#4d4d4d"
+            font = None
+        elif value <= 0.35:
+            message = "✨ [0.16 - 0.35] Soft-Inpaint: Perfekt für Haut-Strukturen, Poren & sanfte Texturanpassungen"
+            color = "#1f7a1f"
+            font = None
+        elif value <= 0.59:
+            message = "🎨 [0.36 - 0.59] Modifikation: Formänderung bei bestehender Anatomie"
+            color = "#d97706"
+            font = None
+        elif value <= 0.80:
+            message = "🔥 [0.60 - 0.80] OPTIMAL: Komplette anatomische Neugenerierung (z.B. Lykaner/Anatomie-Details)"
+            color = "#8b0000"
+            font = ("TkDefaultFont", 9, "bold")
+        else:
+            message = "⚠️ [0.81 - 1.00] Extrem: Ignoriert das Originalbild fast komplett (Gefahr von Bildfehlern)"
+            color = "#7b2cbf"
+            font = None
+
+        if self.canvas_denoise_recommendation_label is not None:
+            self.canvas_denoise_recommendation_label.configure(text=message, fg=color)
+            if font is not None:
+                self.canvas_denoise_recommendation_label.configure(font=font)
+            else:
+                self.canvas_denoise_recommendation_label.configure(font=("TkDefaultFont", 9))
+
+        return message
 
     def update_prompt_preview(self, prompt_text):
         preview_text = (prompt_text or "").strip()
@@ -1546,6 +2230,140 @@ class PromptGui:
 
         self.open_output_window(positive_text, negative_text if negative_text else "-")
 
+    def open_canvas_window(self):
+        if (self.person_count_var.get() or "").strip().lower() != "solo":
+            return
+
+        if self.canvas_window is None or not self.canvas_window.winfo_exists():
+            self.canvas_window = tk.Toplevel(self.root)
+            self.canvas_window.title("Canvas Inpaint")
+            self.canvas_window.geometry("900x820")
+            self.canvas_window.minsize(850, 780)
+            self.canvas_window.protocol("WM_DELETE_WINDOW", self.close_canvas_window)
+
+            params_frame = ttk.LabelFrame(self.canvas_window, text="Canvas parameters")
+            params_frame.pack(fill=tk.X, padx=12, pady=(12, 8))
+
+            ttk.Label(params_frame, text="Denoising Strength").pack(anchor="w", padx=12, pady=(10, 4))
+            denoise_scale = tk.Scale(
+                params_frame,
+                from_=0.0,
+                to=1.0,
+                resolution=0.01,
+                orient=tk.HORIZONTAL,
+                variable=self.canvas_denoise_var,
+                command=self.update_denoising_recommendation,
+                length=320,
+            )
+            denoise_scale.pack(fill=tk.X, padx=12, pady=(0, 4))
+            self.canvas_denoise_recommendation_label = tk.Label(
+                params_frame,
+                text="",
+                anchor="w",
+                justify=tk.LEFT,
+                wraplength=280,
+                padx=2,
+            )
+            self.canvas_denoise_recommendation_label.pack(fill=tk.X, padx=12, pady=(0, 10))
+            self.update_denoising_recommendation(self.canvas_denoise_var.get())
+
+            include_frame = ttk.LabelFrame(self.canvas_window, text="Include Character Details")
+            include_frame.pack(fill=tk.X, padx=12, pady=(0, 8))
+            weight_row = ttk.Frame(include_frame)
+            weight_row.grid(row=0, column=0, columnspan=4, sticky="ew", padx=10, pady=(8, 4))
+            ttk.Label(weight_row, text="Klammer-Gewichtung:").pack(side=tk.LEFT)
+            weight_entry = ttk.Entry(weight_row, textvariable=self.canvas_weight_var, width=8)
+            weight_entry.pack(side=tk.LEFT, padx=(8, 0))
+
+            include_columns = 4
+            for idx, (key, label_text) in enumerate(self.canvas_include_options):
+                include_var = self.canvas_include_vars.get(key)
+                if include_var is None:
+                    continue
+                row = (idx // include_columns) + 1
+                col = idx % include_columns
+                ttk.Checkbutton(
+                    include_frame,
+                    text=label_text,
+                    variable=include_var,
+                    command=self.update_canvas_prompts,
+                ).grid(row=row, column=col, sticky="w", padx=(10, 10), pady=(6, 4))
+            for col in range(include_columns):
+                include_frame.columnconfigure(col, weight=1)
+
+            prompts_frame = ttk.Frame(self.canvas_window, padding=10)
+            prompts_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
+
+            prompts_pane = ttk.Panedwindow(prompts_frame, orient=tk.VERTICAL)
+            prompts_pane.pack(fill=tk.BOTH, expand=True)
+
+            positive_frame = ttk.Frame(prompts_pane)
+            ttk.Label(positive_frame, text="Positive prompt:", font=("TkDefaultFont", 10, "bold")).pack(anchor="w", pady=(5, 2))
+            positive_text_frame = ttk.Frame(positive_frame)
+            positive_text_frame.pack(fill=tk.BOTH, expand=True)
+            self.canvas_positive_text = tk.Text(positive_text_frame, wrap=tk.WORD, height=8, padx=10, pady=10)
+            positive_scrollbar = ttk.Scrollbar(positive_text_frame, orient=tk.VERTICAL, command=self.canvas_positive_text.yview)
+            self.canvas_positive_text.configure(yscrollcommand=positive_scrollbar.set)
+            self.canvas_positive_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            positive_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            prompts_pane.add(positive_frame, weight=1)
+
+            negative_frame = ttk.Frame(prompts_pane)
+            ttk.Label(negative_frame, text="Negative prompt:", font=("TkDefaultFont", 10, "bold")).pack(anchor="w", pady=(5, 2))
+            negative_text_frame = ttk.Frame(negative_frame)
+            negative_text_frame.pack(fill=tk.BOTH, expand=True)
+            self.canvas_negative_text = tk.Text(negative_text_frame, wrap=tk.WORD, height=6, padx=10, pady=10)
+            negative_scrollbar = ttk.Scrollbar(negative_text_frame, orient=tk.VERTICAL, command=self.canvas_negative_text.yview)
+            self.canvas_negative_text.configure(yscrollcommand=negative_scrollbar.set)
+            self.canvas_negative_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            negative_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            prompts_pane.add(negative_frame, weight=1)
+
+            button_bar = ttk.Frame(self.canvas_window)
+            button_bar.pack(fill=tk.X, padx=12, pady=(0, 12))
+            ttk.Button(button_bar, text="Copy positive", command=self.copy_canvas_prompt).pack(side=tk.LEFT, padx=(0, 8))
+            ttk.Button(button_bar, text="Copy negative", command=self.copy_canvas_negative_prompt).pack(side=tk.LEFT, padx=(0, 8))
+            ttk.Button(button_bar, text="Close", command=self.close_canvas_window).pack(side=tk.RIGHT)
+        else:
+            self.canvas_window.deiconify()
+            self.canvas_window.lift()
+
+        self._sync_canvas_include_defaults_from_main_fields()
+        self.update_canvas_prompts()
+
+    def close_canvas_window(self):
+        if self.canvas_window is None or not self.canvas_window.winfo_exists():
+            return
+        self.canvas_window.withdraw()
+
+    def copy_canvas_prompt(self):
+        if self.canvas_positive_text is None:
+            messagebox.showwarning("No prompt", "Generate a prompt first.")
+            return
+
+        text = self.canvas_positive_text.get("1.0", tk.END).strip()
+        if not text:
+            messagebox.showwarning("No prompt", "Generate a prompt first.")
+            return
+
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+        messagebox.showinfo("Copied", "Positive prompt copied to clipboard.")
+
+    def copy_canvas_negative_prompt(self):
+        if self.canvas_negative_text is None:
+            messagebox.showwarning("No prompt", "Generate a prompt first.")
+            return
+
+        text = self.canvas_negative_text.get("1.0", tk.END).strip()
+        if not text or text == "-":
+            messagebox.showwarning("No prompt", "Generate a prompt first.")
+            return
+
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+        messagebox.showinfo("Copied", "Negative prompt copied to clipboard.")
+
     def open_output_window(self, positive_text, negative_text=None):
         if self.output_window is None or not self.output_window.winfo_exists():
             self.output_window = tk.Toplevel(self.root)
@@ -1553,15 +2371,25 @@ class PromptGui:
             self.output_window.geometry("980x620")
             self.output_window.minsize(760, 420)
 
-            self.output_positive = tk.Text(self.output_window, wrap=tk.WORD, height=16, padx=8, pady=8)
-            self.output_positive.pack(fill=tk.BOTH, expand=True, padx=12, pady=(8, 6))
+            positive_frame = ttk.Frame(self.output_window)
+            positive_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(12, 8))
 
-            ttk.Label(self.output_window, text="Positive prompt").pack(anchor="w", padx=12, pady=(12, 0))
-            self.output_positive.pack(fill=tk.BOTH, expand=True, padx=12, pady=(4, 10))
+            ttk.Label(positive_frame, text="Positiver Prompt:", anchor="w").pack(fill=tk.X, anchor="w", pady=(0, 2))
+            self.output_positive = tk.Text(positive_frame, wrap=tk.WORD, height=16, padx=8, pady=8)
+            positive_scrollbar = ttk.Scrollbar(positive_frame, orient=tk.VERTICAL, command=self.output_positive.yview)
+            self.output_positive.configure(yscrollcommand=positive_scrollbar.set)
+            self.output_positive.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            positive_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-            ttk.Label(self.output_window, text="Negative prompt").pack(anchor="w", padx=12, pady=(0, 0))
-            self.output_negative = tk.Text(self.output_window, wrap=tk.WORD, height=10, padx=8, pady=8)
-            self.output_negative.pack(fill=tk.BOTH, expand=True, padx=12, pady=(4, 12))
+            negative_frame = ttk.Frame(self.output_window)
+            negative_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
+
+            ttk.Label(negative_frame, text="Negativer Prompt:", anchor="w").pack(fill=tk.X, anchor="w", pady=(0, 2))
+            self.output_negative = tk.Text(negative_frame, wrap=tk.WORD, height=10, padx=8, pady=8)
+            negative_scrollbar = ttk.Scrollbar(negative_frame, orient=tk.VERTICAL, command=self.output_negative.yview)
+            self.output_negative.configure(yscrollcommand=negative_scrollbar.set)
+            self.output_negative.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            negative_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
             button_bar = ttk.Frame(self.output_window)
             button_bar.pack(fill=tk.X, padx=12, pady=(0, 12))
@@ -1674,6 +2502,7 @@ class PromptGui:
                 tab_data["clothing_tags_field"] = self._read_widget_value(clothing_widget)
 
             state_for_checksum["person_tabs_data"][str(person_index)] = tab_data
+            state_for_checksum[f"person_{person_index}_special_skin"] = tab_data.get("special_skin_type", "None")
 
         # Berechnet den fertigen, allumfassenden Base64-Teil-Code
         current_checksum = compute_prompt_checksum(state_for_checksum)
@@ -1683,34 +2512,19 @@ class PromptGui:
         # -------------------------------------------------------------------
 
 
-        final_positive_prompt, sub1_prompt, sub2_prompt = self._build_current_positive_prompt()
+        final_positive_prompt, sub1_prompt, sub2_prompt, feral_mode_enabled = self._build_current_positive_prompt()
         self.update_prompt_preview(final_positive_prompt)
 
         if self.mode_var.get() == "master":
-            node = CR_Pony_Master()
-            _, negative = node.generate_master(
-                seed=seed,
-                rating=self.rating_var.get(),
-                location=self.location_var.get(),
-                lighting=self.lighting_var.get(),
-                camera=self.camera_var.get(),
-                use_break=self.use_break_var.get(),
-                nsfw_mode=self.nsfw_var.get(),
-                sex_act=self.sex_act_var.get(),
-                sex_position=self.sex_position_var.get(),
-                score_scheme=self.score_scheme_var.get(),
-                source_bias="None",
-                strong_anime_bias=False,
-                style_preset="None",
-                subject_1=sub1_prompt,  # FIXED: Nutzen nun die reparierte Variable
-                subject_2=sub2_prompt,  # FIXED: Nutzen nun die reparierte Variable
-                subject_3=None,
-                subject_4=None,
-                photo_boost=False,
-            )
+            negative = self._build_current_master_negative_prompt(seed, sub1_prompt, sub2_prompt)
+            if feral_mode_enabled:
+                negative = compose_negative_prompt(negative, FERAL_NEGATIVE_TAGS)
             self.open_output_window(final_positive_prompt, negative)
         else:
-            self.open_output_window(final_positive_prompt)
+            if feral_mode_enabled:
+                self.open_output_window(final_positive_prompt, compose_negative_prompt("-", FERAL_NEGATIVE_TAGS))
+            else:
+                self.open_output_window(final_positive_prompt, compose_negative_prompt("-"))
 
     def save_prompt_file(self):
         if self.output_positive is None:
