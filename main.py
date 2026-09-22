@@ -5,6 +5,7 @@ import re
 import sys
 import base64
 import json
+import os
 import zlib
 from pathlib import Path
 import tkinter as tk
@@ -1037,11 +1038,20 @@ class PromptGui:
         self.custom_tags_container = None
 
         try:
-            with open("presets.json", "r", encoding="utf-8") as f:
+            # Sicherheitscheck für PyInstaller: Wenn als EXE verpackt, nutze den temporären Pfad (_MEIPASS)
+            import sys
+            import os
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                json_path = os.path.join(sys._MEIPASS, "presets.json")
+            else:
+                json_path = "presets.json"
+
+            with open(json_path, "r", encoding="utf-8") as f:
                 self.INPAINT_PRESET_DB = json.load(f)
         except Exception as e:
             print(f"Fehler beim Laden der presets.json: {e}")
             self.INPAINT_PRESET_DB = {}
+
 
         for var in (
             self.mode_var,
@@ -1387,24 +1397,24 @@ class PromptGui:
                     continue
                 widget.set(get_neutral_reset_value(values, default))
 
-        neutral_var_values = {
-            self.mode_var: "subject",
-            self.seed_var: "42",
-            self.person_count_var: "solo",
-            self.duo_second_gender_var: get_neutral_reset_value(self.gender_options, "female"),
-            self.duo_second_pose_var: get_neutral_reset_value(self.duo_field_values.get("pose", ([], "Random"))[0], "Random"),
-            self.duo_second_expression_var: get_neutral_reset_value(self.duo_field_values.get("expression", ([], "Random"))[0], "Random"),
-            self.duo_second_body_type_var: get_neutral_reset_value(self.duo_field_values.get("body_type", ([], "None"))[0], "None"),
-            self.rating_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.RATINGS), self.rating_var.get()),
-            self.score_scheme_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SCORE_SCHEMES), self.score_scheme_var.get()),
-            self.image_quality_var: "None",
-            self.location_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LOCATIONS), self.location_var.get()),
-            self.lighting_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LIGHTING), self.lighting_var.get()),
-            self.camera_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.CAMERAS), self.camera_var.get()),
-            self.sex_act_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_ACTS), "None"),
-            self.sex_position_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_POSITIONS), "None"),
-        }
-        for var, value in neutral_var_values.items():
+        neutral_var_values = [
+            (self.mode_var, "subject"),
+            (self.seed_var, "42"),
+            (self.person_count_var, "solo"),
+            (self.duo_second_gender_var, get_neutral_reset_value(self.gender_options, "female")),
+            (self.duo_second_pose_var, get_neutral_reset_value(self.duo_field_values.get("pose", ([], "Random"))[0], "Random")),
+            (self.duo_second_expression_var, get_neutral_reset_value(self.duo_field_values.get("expression", ([], "Random"))[0], "Random")),
+            (self.duo_second_body_type_var, get_neutral_reset_value(self.duo_field_values.get("body_type", ([], "None"))[0], "None")),
+            (self.rating_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.RATINGS), self.rating_var.get())),
+            (self.score_scheme_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SCORE_SCHEMES), self.score_scheme_var.get())),
+            (self.image_quality_var, "None"),
+            (self.location_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LOCATIONS), self.location_var.get())),
+            (self.lighting_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LIGHTING), self.lighting_var.get())),
+            (self.camera_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.CAMERAS), self.camera_var.get())),
+            (self.sex_act_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_ACTS), "None")),
+            (self.sex_position_var, get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_POSITIONS), "None")),
+        ]
+        for var, value in neutral_var_values:
             var.set(value)
 
         self.nsfw_var.set(False)
