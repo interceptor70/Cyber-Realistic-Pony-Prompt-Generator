@@ -1,299 +1,579 @@
 {
-  "ur-feuerpferd": {
+  "ur-feuerpferd male": {
     "body_type": "None",
     "special_skin": "None",
     "denoising": 0.65,
-    "positive": "glowing molten lava patterns, burning orange magma streams, pure fire and light radiating from the core, fiery red fx, seamless integration with the horse body, hyperdetailed fantasy digital painting",
-    "negative": "blurry, bad anatomy, low quality, deformed, dark colors",
+    "positive": "1boy, male, stallion, glowing molten lava patterns, burning orange magma streams, pure fire and light radiating from the core, fiery red fx, seamless integration with the horse body, hyperdetailed fantasy digital painting",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, blurry, bad anatomy, low quality, deformed, dark colors",
     "info": "💡 Was passieren soll: Fügt das Detail flammend, leuchtend und passend in das brennende Hintergrundbild ein.\n\n🖌️ So malen: Ziehe mit dem Pinsel nur einen ganz schmalen, leicht schrägen Strich nach vorne/unten unter dem Bauch. Keine dicke Wolke malen, sonst entsteht ein Kopf!"
   },
-  "giger-stil": {
+  "ur-feuerpferd female": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.65,
+    "positive": "1girl, female, mare, glowing molten lava patterns, burning orange magma streams, pure fire and light radiating from the core, fiery red fx, seamless integration with the horse body, hyperdetailed fantasy digital painting",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, blurry, bad anatomy, low quality, deformed, dark colors",
+    "info": "💡 Was passieren soll: Fügt das Detail flammend, leuchtend und passend in das brennende Hintergrundbild ein.\n\n🖌️ So malen: Ziehe mit dem Pinsel nur einen ganz schmalen, leicht schrägen Strich nach vorne/unten unter dem Bauch. Keine dicke Wolke malen, sonst entsteht ein Kopf!"
+  },
+  "giger-stil male": {
     "body_type": "None",
     "special_skin": "None",
     "denoising": 0.80,
-    "positive": "intricate biomechanical armor plating, glowing neon energy conduits, complex skeletal structure integrated with dark metallic surfaces, prominent flared mushroom head with a thick detailed distinct glans ridge, fully erect pointing upwards, covered in prominent pulsing veins and bulging blood vessels, large heavy testicles at the base, hyperdetailed dark fantasy oil painting style, muted earthy colors, cinematic lighting, score_9, score_8_up, score_7_up",
-    "negative": "anime, cartoon, comic, manga, vector art, 2d drawing, bright colors, blurry, low quality",
+    "positive": "1boy, male, intricate biomechanical armor plating, glowing neon energy conduits, complex skeletal structure integrated with dark metallic surfaces, distinctly flared glans, thick detailed prominent corona glandis, fully erect pointing upwards, covered in prominent pulsing veins and bulging blood vessels, large heavy testicles at the base, hyperdetailed dark fantasy oil painting style, muted earthy colors",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, anime, cartoon, comic, manga, vector art, 2d drawing, bright colors, blurry, low quality",
     "info": "💡 Was passieren soll: Für biomechanische Figuren mit matten Hauttönen, aufgerichteter Form und scharfen Adern.\n\n🖌️ So malen: Ziehe einen länglichen Strich schräg nach oben über den Bauch der stehenden Figur. Male die Maske ganz am Ende mit dem Pinsel deutlich dicker und rundlicher aus."
   },
-  "male to femal": {
-    "body_type": "female",
+  "giger-stil female": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1girl, female, intricate biomechanical armor plating, glowing neon energy conduits, complex skeletal structure integrated with dark metallic surfaces, upright correctly oriented female genitalia, anatomical top-to-bottom layout, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, hyperdetailed dark fantasy oil painting style, muted earthy colors",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, anime, cartoon, comic, manga, vector art, 2d drawing, bright colors, blurry, low quality",
+    "info": "💡 Was passieren soll: Für biomechanische Figuren mit matten Hauttönen, geöffneter weiblicher Form und scharfen Details.\n\n🖌️ So malen: Übermale die komplette Genitalzone großflächig. Male die lila Maske oben (am Schambein) breit und lasse sie nach unten hin schmaler auslaufen."
+  },
+  "human male to female": {
+    "body_type": "human",
     "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, 1girl, full transformation into a beautiful female body, elegant feminine curves, soft smooth skin texture, upright correctly oriented female genitalia, anatomical top-to-bottom layout, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, authentic human skin texture, perfect shading and shadows matching the original photo, sharp focus, masterfully integrated",
+    "positive": "1girl, female, full transformation into a beautiful female body, elegant feminine curves, soft smooth skin texture, upright correctly oriented female genitalia, anatomical top-to-bottom layout, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, authentic human skin texture, perfect shading and shadows matching the original photo, sharp focus, masterfully integrated",
     "negative": "penis, phallus, testicles, balls, scrotum, male, human_penis, cartoon, comic, manga, upside down, inverted, blurry",
     "info": "💡 Was passieren soll: Tauscht die männliche Anatomie auf einem realen Foto komplett gegen perfekt geöffnete weibliche Merkmale aus.\n\n🖌️ So malen: Übermale die komplette Genitalzone großflächig. Male die lila Maske oben (am Schambein) breit und lasse sie nach unten hin schmaler auslaufen, um der KI die Richtung vorzugeben."
   },
-  "female to male": {
-    "body_type": "male",
+  "humanoid female to male": {
+    "body_type": "humanoid",
     "special_skin": "None",
     "denoising": 0.78,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, 1boy, male, full transformation into a strong masculine body, muscular chest, hard defining lines, athletic skin texture, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, photorealistic, raw_photo, realistic_skin_texture, dynamic_lighting, masterpiece",
+    "positive": "1boy, male, full transformation into a strong masculine body, muscular chest, hard defining lines, athletic skin texture, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, photorealistic, raw_photo, realistic_skin_texture, dynamic_lighting, masterpiece",
     "negative": "vagina, pussy, female_genitalia, anime, cartoon, comic, manga, 2d_drawing, blurry, low_quality, upside_down",
     "info": "💡 Was passieren soll: Baut auf einer vorher komplett flachen, weiblichen Hautoberfläche ein echtes, adriges Männer-Detail auf.\n\n🖌️ So malen: Zeichne einen Strich schräg nach unten. Male direkt am Körperansatz (der Basis) zwei dicke, verbundene Kreise für die Hoden vor, um der 3D-Kombination den perfekten Platz zu geben."
   },
-  "centaur": {
+  "centaur male": {
     "body_type": "centaur",
     "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, centaur, male, majestic equine lower body, powerful muscular human torso, detailed leather barding, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright_rim_lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, distorted anatomy, low quality, female, human_penis",
+    "positive": "centaur, male, majestic equine lower body, powerful muscular human torso, detailed leather barding, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright_rim_lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, distorted anatomy, low quality, female, human_pussy, female_genitalia",
     "info": "💡 Was passieren soll: Zwingt die KI bei einer männlichen Figur, echte, massive Pferde-Anatomie im stolzen Bogen nach unten zu zeichnen, ohne dass sie flachgedrückt wird.\n\n🖌️ So malen: Setze die Maske unter dem Pferdebauch an, ziehe sie im deutlichen Bogen erst ein Stück nach vorne (vom Körper weg) und schwungvoll nach unten. Nicht zu lang machen!"
   },
   "centaur female": {
     "body_type": "centaur",
     "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, centaur, female, majestic equine lower body, gorgeous feminine human torso, elegant curves, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright_rim_lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, distorted anatomy, low quality, male, human_penis",
-    "info": "💡 Was passieren soll: Erzeugt an einem weiblichen Zentaurenkörper die massive, unzensierte Pferde-Anatomie im perfekten Bogen nach unten.\n\n🖌️ So malen: Exakt wie beim Mann: Im Schritt ansetzen, einen eleganten Bogen nach vorne in die freie Luft zeichnen und nach unten auslaufen lassen. Das Ende pilzförmig dicker machen."
+    "positive": "centaur, female, majestic equine lower body, gorgeous feminine human torso, elegant curves, equine_genitalia, female_genitalia, horse_vulva, explicit detailed female genitalia, fully visible wide open pussy, pink interior texture, moist and wet, bright_rim_lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, distorted anatomy, low quality, male, horse_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Erzeugt an einem weiblichen Zentaurenkörper die massive, unzensierte weibliche Pferde-Anatomie im perfekten Bogen nach unten.\n\n🖌️ So malen: Im Schritt ansetzen, einen eleganten Bogen nach vorne in die freie Luft zeichnen und nach unten auslaufen lassen. Das Ende pilzförmig dicker machen."
   },
-  "lycanthrope": {
+  "lycanthrope male": {
     "body_type": "lycanthrope",
     "special_skin": "thick fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, lycanthrope, werewolf, monster, male, thick dark fur texture, heavy muscular chest, glowing amber eyes, powerful stance, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, cinematic_lighting, masterpiece",
-    "negative": "human armor, clothing, anime, cartoon, comic, blurry, low quality, female, human_penis",
+    "positive": "lycanthrope, werewolf, monster, 1boy, male, thick dark fur texture, heavy muscular chest, glowing amber eyes, powerful stance, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, masterpiece",
+    "negative": "human armor, clothing, anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Zeichnet die canide Anatomie bei einem männlichen Werwolf mit dem typischen, dicken Knoten an der Basis und stark pulsierenden Adern.\n\n🖌️ So malen: Setze die Maske am Körper an und male dort als Erstes einen sehr dicken, kreisrunden Fleck auf (für den Knoten). Ziehe von diesem Kreis aus einen schmaleren Bogen nach vorne-unten weg."
   },
-  "werewolf": {
-    "body_type": "werewolf",
+  "lycanthrope female": {
+    "body_type": "lycanthrope",
     "special_skin": "thick fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, lycanthrope, werewolf, monster, female, thick sleek fur texture, athletic feminine curves, glowing amber eyes, alpha female stance, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, cinematic_lighting, masterpiece",
-    "negative": "human armor, clothing, anime, cartoon, comic, blurry, low quality, male, human_penis",
+    "positive": "lycanthrope, werewolf, monster, 1girl, female, thick sleek fur texture, athletic feminine curves, glowing amber eyes, alpha female stance, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "human armor, clothing, anime, cartoon, comic, blurry, low quality, male, dog_penis, penis, phallus, testicles, balls, scrotum",
     "info": "💡 Was passieren soll: Erzeugt die markante Wolfs-Anatomie mit Schwellknoten an einer weiblichen, athletischen Werwölfin.\n\n🖌️ So malen: Exakt dieselbe Maske wie beim Mann: Erst ein fetter rosa Kreis direkt am Körper für den Knoten, danach der stramme, schmalere Strich nach vorne-unten in die Luft."
   },
-  "avian": {
+  "avian male": {
     "body_type": "avian",
     "special_skin": "soft feathers",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro griffin, male, powerful avian wings, golden feathers, muscular alpha torso, majestic pose, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, bright_rim_lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, malformed wings, female, human_penis",
+    "positive": "anthro griffin, 1boy, male, powerful avian wings, golden feathers, muscular alpha torso, majestic pose, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, malformed wings, 1girl, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Baut die Anatomie bei aufrecht stehenden, männlichen Vogel- und Greifwesen im stolzen Bogen nach unten ein.\n\n🖌️ So malen: Setze an der Hüfte des Federkörpers an, male den Strich im Bogen erst ein Stück nach vorne (vom Körper weg) und dann nach unten auslaufend."
   },
-  "harpy": {
+  "avian female": {
+    "body_type": "avian",
+    "special_skin": "soft feathers",
+    "denoising": 0.75,
+    "positive": "anthro griffin, 1girl, female, beautiful avian wings, shimmering feathers, elegant feminine warrior pose, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, malformed wings, 1boy, male, horse_penis, dog_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Fügt die detaillierte, unzensierte Anatomie bei einer aufrecht stehenden, weiblichen Vogel-Kreatur im Bogen ein.\n\n🖌️ So malen: Den Bogen elegant in den Luftraum vor der Hüfte zeichnen, ohne die Federn am Oberkörper zu übermalen."
+  },
+  "harpy male": {
     "body_type": "harpy",
     "special_skin": "soft feathers",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro griffin, female, beautiful avian wings, shimmering feathers, elegant feminine warrior pose, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, bright_rim_lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, malformed wings, male, human_penis",
-    "info": "💡 Was passieren soll: Fügt die detaillierte, unzensierte Anatomie bei einer eleganten, weiblichen Greifen-Kriegerin im Bogen ein.\n\n🖌️ So malen: Identisch zu Szenario 9. Den Bogen elegant in den Luftraum vor der Hüfte zeichnen, ohne die Federn am Oberkörper zu übermalen."
+    "positive": "anthro griffin, 1boy, male, powerful avian wings, golden feathers, muscular alpha torso, majestic pose, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, malformed wings, 1girl, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Baut die Anatomie bei aufrecht stehenden, männlichen Vogel- und Greifwesen (Harpyien-Männer) im stolzen Bogen nach unten ein.\n\n🖌️ So malen: Setze an der Hüfte des Federkörpers an, male den Strich im Bogen erst ein Stück nach vorne (vom Körper weg) und dann nach unten auslaufend."
   },
-  "naga": {
+  "harpy female": {
+    "body_type": "harpy",
+    "special_skin": "soft feathers",
+    "denoising": 0.75,
+    "positive": "anthro griffin, 1girl, female, beautiful avian wings, shimmering feathers, elegant feminine warrior pose, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, malformed wings, 1boy, male, horse_penis, dog_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Fügt die detaillierte, unzensierte Anatomie bei einer eleganten, weiblichen Greifen-Kriegerin (Harpyie) im Bogen ein.\n\n🖌️ So malen: Den Bogen elegant in den Luftraum vor der Hüfte zeichnen, ohne die Federn am Oberkörper zu übermalen."
+  },
+  "naga male": {
     "body_type": "naga",
     "special_skin": "dragon scales",
     "denoising": 0.78,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, male naga, powerful muscular torso, beautiful iridescent snake scales covering the lower body, slithering snake tail, jungle temple ruins background, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, cinematic lighting, masterpiece",
-    "negative": "cartoon, comic, blurry, low_quality, female",
+    "positive": "male naga, 1boy, powerful muscular torso, beautiful iridescent snake scales covering the lower body, slithering snake tail, jungle temple ruins background, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, masterpiece",
+    "negative": "cartoon, comic, blurry, low_quality, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Nutzt den muskulösen Schlangenkörper ab der Hüfte für eine massive, aufgerichtete 3D-Anatomie im stolzen Bogen nach vorne-unten.\n\n🖌️ So malen: Da Schlangenwesen keine Beine haben, male die Maske direkt dort auf die Schuppen, wo der Übergang vom Menschen zum Schlangenkörper ist. Setze zwei dicke Kreise (Hoden) nebeneinander und ziehe den Schaft schräg nach unten weg."
   },
   "naga female": {
     "body_type": "naga",
     "special_skin": "dragon scales",
     "denoising": 0.78,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, 1girl, female naga, beautiful iridescent snake scales covering the lower body, slithering snake tail, jungle temple ruins background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, cinematic lighting, masterpiece",
-    "negative": "cartoon, comic, blurry, low_quality, male, penis, phallus, testicles",
+    "positive": "1girl, female naga, beautiful iridescent snake scales covering the lower body, slithering snake tail, jungle temple ruins background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "cartoon, comic, blurry, low_quality, male, penis, phallus, testicles, balls, scrotum",
     "info": "💡 Was passieren soll: Erzeugt an einem schimmernden, weiblichen Schlangen-Unterkörper die detaillierte, unzensierte weibliche Anatomie.\n\n🖌️ So malen: Übermale den Übergangsbereich am Becken großflächig als umgedrehtes Dreieck. Oben breit ansetzen und nach unten hin spitz auf den Schuppen auslaufen lassen."
   },
   "mermaid": {
     "body_type": "mermaid",
     "special_skin": "smooth scales",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, 1girl, mermaid, beautiful iridescent fish scales covering the lower body, coral reef background, wet glistening skin texture, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, underwater lighting, masterpiece",
-    "negative": "cartoon, comic, blurry, low_quality, distorted anatomy, male, penis, phallus, testicles",
+    "positive": "1girl, mermaid, beautiful iridescent fish scales covering the lower body, coral reef background, wet glistening skin texture, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, underwater lighting, masterpiece",
+    "negative": "cartoon, comic, blurry, low_quality, distorted anatomy, male, penis, phallus, testicles, balls, scrotum",
     "info": "💡 Was passieren soll: Verwandelt die untere Hälfte in einen wunderschönen, schimmernden Fischschwanz mit perfekt geöffneter weiblicher Anatomie.\n\n🖌️ So malen: Übermale die Beine ab der Hüfte abwärts. Im Intimbereich das Dreieck oben breit und unten spitz malen. Ziehe die Maske leicht über die Brüste hoch, falls diese die feuchte Glanz-Textur mitbekommen sollen!"
   },
   "merman": {
     "body_type": "merman",
     "special_skin": "smooth scales",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, 1boy, merman, powerful masculine build, beautiful iridescent fish scales covering the lower body, dark depths background, wet glistening skin texture, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, underwater lighting, masterpiece",
-    "negative": "cartoon, comic, blurry, low_quality, distorted anatomy, female",
+    "positive": "1boy, merman, powerful masculine build, beautiful iridescent fish scales covering the lower body, dark depths background, wet glistening skin texture, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, underwater lighting, masterpiece",
+    "negative": "cartoon, comic, blurry, low_quality, distorted anatomy, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Erzeugt einen mächtigen, schuppigen Meermann-Körper mit massiver, aufgerichteter 3D-Struktur.\n\n🖌️ So malen: Direkt am Hüftansatz des Fischschwanzes zwei dicke Kreise nebeneinander für den schweren Hodensack vorzeichnen. Danach den massiven Balken schräg nach unten wegmalen."
   },
-  "shark anthro": {
+  "shark anthro male": {
     "body_type": "anthro",
-    "special_skin": "rough fur",
+    "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro shark, male, powerful muscular build, rough shark skin, bioluminescent markings, deep ocean environment, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, cinematic dark lighting, masterpiece",
-    "negative": "clothing, anime, cartoon, comic, blurry, low_quality, female, human_penis",
+    "positive": "anthro shark, 1boy, male, powerful muscular build, rough shark skin, bioluminescent markings, deep ocean environment, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, masterpiece",
+    "negative": "clothing, anime, cartoon, comic, blurry, low_quality, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Für unheimliche Meereskreaturen mit glatter, feuchter Hai-Haut. Bringt extrem scharfe, pulsierende Adern und den caniden Schwellknoten ein.\n\n🖌️ So malen: Setze die Maske am Becken an und male dort als Erstes einen dicken, runden Kreis auf (für den Knoten). Ziehe von diesem Kreis aus einen schmaleren Bogen nach vorne-unten in die freie Luft."
   },
   "shark anthro female": {
     "body_type": "anthro",
-    "special_skin": "rough fur",
+    "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro shark, female, sleek hydrodynamic feminine build, smooth shark skin, bioluminescent markings, deep ocean environment, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, cinematic dark lighting, masterpiece",
-    "negative": "clothing, anime, cartoon, comic, blurry, low_quality, male, human_penis",
-    "info": "💡 Was passieren soll: Erzeugt die markante Hai-Haut-Struktur und die unzensierte Raubtier-Anatomie an einer schlanken, weiblichen Hai-Kreatur.\n\n🖌️ So malen: IdenƟsch zu Szenario 15. Erst der feƩe, rosa Kreis direkt am Körper für den Schwellknoten, danach der geschwungene Strich nach vorne-unten in den LuŌraum."
+    "positive": "anthro shark, 1girl, female, sleek hydrodynamic feminine build, smooth shark skin, bioluminescent markings, deep ocean environment, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "clothing, anime, cartoon, comic, blurry, low_quality, male, dog_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Erzeugt die markante Hai-Haut-Struktur und die unzensierte Raubtier-Anatomie an einer schlanken, weiblichen Hai-Kreatur.\n\n🖌️ So malen: Erst der fette, rosa Kreis direkt am Körper für den Schwellknoten, danach der geschwungene Strich nach vorne-unten in den Luftraum."
   },
-  "minotaur": {
+  "minotaur male": {
     "body_type": "minotaur",
     "special_skin": "thick fur",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, minotaur, anthro bovine, ox-man, male, massive muscular bull body, thick leather skin, heavy build, battle stance, explicit detailed equine_genitalia, horse_penis, rock hard fully erect pointing downwards at an aggressive stiff angle, heavy thrusting stance, thick_glans_ridge, detailed_veins, massive_testicles, volumetric lighting, masterpiece",
-    "negative": "modern items, anime, cartoon, comic, blurry, low quality, female, human_penis",
-    "info": "💡 Was passieren soll: Für ein massives, schweres Rindvieh-Wesen auf zwei Beinen. Nutzt eine wuchƟge, adrige und dominante Struktur, die farblich perfekt mit dem dunklen Fell verschmilzt.\n\n🖌️ So malen: Da Ochsenwesen extrem breit gebaut sind, male die lila Maske von vornherein deutlich dicker. Setze an der Basis kräŌig an und ziehe ein breites Feld schräg nach vorne-unten weg."
+    "positive": "minotaur, anthro bovine, ox-man, 1boy, male, massive muscular bull body, thick leather skin, heavy build, battle stance, explicit detailed equine_genitalia, horse_penis, rock hard fully erect pointing downwards at an aggressive stiff angle, heavy thrusting stance, thick_glans_ridge, detailed_veins, massive_testicles, volumetric lighting, masterpiece",
+    "negative": "modern items, anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Für ein massives, schweres Rindvieh-Wesen auf zwei Beinen. Nutzt eine wuchtige, adrige und dominante Struktur, die farblich perfekt mit dem dunklen Fell verschmilzt.\n\n🖌️ So malen: Da Ochsenwesen extrem breit gebaut sind, male die lila Maske von vornherein deutlich dicker. Setze an der Basis kräftig an und ziehe ein breites Feld schräg nach vorne-unten weg."
   },
   "minotaur female": {
     "body_type": "minotaur",
     "special_skin": "thick fur",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, minotaur, anthro bovine, female, powerful muscular feminine build, thick exotic cow coat texture, heavy horns, explicit detailed equine_genitalia, horse_penis, rock hard fully erect pointing downwards at an aggressive stiff angle, heavy thrusting stance, thick_glans_ridge, detailed_veins, large_testicles, volumetric lighting, masterpiece",
-    "negative": "modern items, anime, cartoon, comic, blurry, low quality, male, human_penis",
-    "info": "💡 Was passieren soll: Fügt die unzensierte, schwere Pferde-Anatomie im steifen Winkel an einer mächƟgen, gehörnten Minotaurus-Frau ein.\n\n🖌️ So malen: Genau wie beim Mann: Eine dicke, wuchƟge Masken-SilhoueƩe schräg nach unten zeichnen, damit die KI genug Platz für die schwere Tier-Geometrie hat."
+    "positive": "minotaur, anthro bovine, 1girl, female, powerful muscular feminine build, thick exotic cow coat texture, heavy horns, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, volumetric lighting, masterpiece",
+    "negative": "modern items, anime, cartoon, comic, blurry, low quality, male, horse_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Fügt die unzensierte, schwere Pferde-Anatomie im steifen Winkel an einer mächtigen, gehörnten Minotaurus-Frau ein.\n\n🖌️ So malen: Eine dicke, wuchtige Masken-Silhouette schräg nach unten zeichnen, damit die KI genug Platz für die schwere Tier-Geometrie hat."
   },
-  "anthro horse": {
+  "anthro horse male": {
     "body_type": "anthro",
     "special_skin": "short fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro equine, anthro stallion, male, muscular stallion body standing on two legs, sleek horse coat texture, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright rim lighting, masterpiece",
-    "negative": "human clothes, anime, cartoon, comic, blurry, female, human_penis",
-    "info": "💡 Was passieren soll: Erstellt ein aufrecht gehendes Pferdewesen auf zwei Beinen (Zentaur-AlternaƟve). AkƟviert die massive Pferde-Anatomie im perfekten Bogen nach unten.\n\n🖌️ So malen: Setze die Maske im SchriƩ an. Ziehe den Pinsel im deutlichen Bogen erst ein Stück nach vorne (vom Körper weg) und schwungvoll nach unten. Am Ende pilzförmig dicker werden."
+    "positive": "anthro equine, anthro stallion, 1boy, male, muscular stallion body standing on two legs, sleek horse coat texture, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright rim lighting, masterpiece",
+    "negative": "human clothes, anime, cartoon, comic, blurry, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Erstellt ein aufrecht gehendes Pferdewesen auf zwei Beinen (Zentaur-Alternative). Aktiviert die massive Pferde-Anatomie im perfekten Bogen nach unten.\n\n🖌️ So malen: Setze die Maske im Schritt an. Ziehe den Pinsel im deutlichen Bogen erst ein Stück nach vorne (vom Körper weg) und schwungvoll nach unten. Am Ende pilzförmig dicker werden."
   },
   "anthro horse female": {
     "body_type": "anthro",
     "special_skin": "short fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro equine, anthro mare, female, elegant feminine horse body standing on two legs, sleek glossy coat texture, equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, bright rim lighting, masterpiece",
-    "negative": "human clothes, anime, cartoon, comic, blurry, male, human_penis",
-    "info": "💡 Was passieren soll: AkƟviert den unzensierten Pferde-Look im eleganten Bogen nach vorne-unten an einer aufrecht stehenden Pferdefrau (Stute).\n\n🖌️ So malen: IdenƟsch zu Szenario 19. Den lila Pinselstrich im stolzen Bogen in den LuŌraum vor dem SchriƩ malen, ohne die Beine oder den Bauch der Stute zu beschädigen."
+    "positive": "anthro equine, anthro mare, 1girl, female, elegant feminine horse body standing on two legs, sleek glossy coat texture, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, bright rim lighting, masterpiece",
+    "negative": "human clothes, anime, cartoon, comic, blurry, male, horse_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Aktiviert den unzensierten Pferde-Look im eleganten Bogen nach vorne-unten an einer aufrecht stehenden Pferdefrau (Stute).\n\n🖌️ So malen: Den lila Pinselstrich im stolzen Bogen in den Luftraum vor dem Schritt malen, ohne die Beine oder den Bauch der Stute zu beschädigen."
   },
-  "anthro tiger": {
+  "anthro panther male": {
     "body_type": "anthro",
-    "special_skin": "striped fur",
+    "special_skin": "short fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro panther, male, sleek pitch black fur, heavy muscular feline build, glowing yellow eyes, dark cinemaƟc lighƟng, night background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, masterpiece",
-    "negative": "clothing, anime, cartoon, comic, blurry, low quality, female, human_penis",
-    "info": "💡 Was passieren soll: Erstellt einen muskulösen Panther-Menschen mit Ɵefschwarzem Fell und der markanten, adrigen Caniden-Anatomie inklusive Schwellknoten.\n\n🖌️ So malen: Setze die Maske direkt im SchriƩ an und male dort als Erstes einen dicken, runden Kreis für den Knoten auf. Ziehe von diesem Kreis aus einen schmaleren Bogen nach vorne-unten weg."
+    "positive": "anthro panther, 1boy, male, sleek pitch black fur, heavy muscular feline build, glowing yellow eyes, dark cinematic lighting, night background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, masterpiece",
+    "negative": "clothing, anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Erstellt einen muskulösen Panther-Menschen mit tiefschwarzem Fell und der markanten, adrigen Caniden-Anatomie inklusive Schwellknoten.\n\n🖌️ So malen: Setze die Maske direkt im Schritt an und male dort als Erstes einen dicken, runden Kreis für den Knoten auf. Ziehe von diesem Kreis aus einen schmaleren Bogen nach vorne-unten weg."
   },
-  "anthro tiger female": {
+  "anthro panther female": {
     "body_type": "anthro",
-    "special_skin": "striped fur",
+    "special_skin": "short fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro panther, female, sleek glossy black fur, exoƟc feminine feline curves, glowing yellow eyes, dark cinemaƟc lighƟng, night background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, masterpiece",
-    "negative": "clothing, anime, cartoon, comic, blurry, low quality, male, human_penis",
-    "info": "💡 Was passieren soll: Erzeugt die markante Caniden-Anatomie mit Schwellknoten an einer geschmeidigen, weiblichen Panther-Kreatur mit glänzendem Fell.\n\n🖌️ So malen: IdenƟsch zu Szenario 21. Erst der feƩe rosa Kreis direkt am Körper für den Knoten, danach der geschwungene, schmalere Strich nach vorne-unten in die LuŌ."
+    "positive": "anthro panther, 1girl, female, sleek glossy black fur, exotic feminine feline curves, glowing yellow eyes, dark cinematic lighting, night background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, labia minora, clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "clothing, anime, cartoon, comic, blurry, low quality, male, dog_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Erzeugt die markante Caniden-Anatomie mit Schwellknoten an einer geschmeidigen, weiblichen Panther-Kreatur mit glänzendem Fell.\n\n🖌️ So malen: Erst der fette rosa Kreis direkt am Körper für den Knoten, danach der geschwungene, schmalere Strich nach vorne-unten in die Luft."
   },
-  "dragon anthro": {
+  "dragon anthro male": {
     "body_type": "dragonkin",
     "special_skin": "dragon scales",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro dragon, draconic humanoid, male, thick plated repƟle scales, massive wings on back, spikes, volcanic background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, cinemaƟc lighƟng, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, low quality, female, penis, phallus, testicles",
-    "info": "💡 Was passieren soll: Für ein mächƟges, männliches Echsenwesen mit dicken SchuppenplaƩen und der perfekt geöffneten, unzensierten weiblichen Anatomie.\n\n🖌️ So malen: Übermale die gesamte InƟmzone großflächig als umgedrehtes Dreieck. Oben am Schambein sehr breit ansetzen, nach unten hin spitz auf den Schuppen auslaufen lassen."
+    "positive": "anthro dragon, draconic humanoid, 1boy, male, thick plated reptile scales, massive wings on back, spikes, volcanic background, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Für ein mächtiges, männliches Echsenwesen mit dicken Schuppenplatten und der perfekt geöffneten, unzensierten männlichen Anatomie.\n\n🖌️ So malen: Direkt am Hüftansatz auf den Schuppen ansetzen. Zwei dicke Kreise nebeneinander für die Hoden vorzeichnen, danach den massiven Schaft schräg nach unten wegziehen."
   },
   "dragon anthro female": {
     "body_type": "dragonkin",
     "special_skin": "dragon scales",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro dragon, draconic humanoid, female, elegant plated repƟle scales, sleek wings on back, horns, volcanic background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, cinemaƟc lighƟng, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, low quality, male, penis, phallus, testicles",
-    "info": "💡 Was passieren soll: Fügt die detaillierte, unzensierte weibliche Genitalstruktur an einer eleganten, weiblichen Drachen-Kriegerin ein.\n\n🖌️ So malen: Exakt dieselbe Dreiecks-Maske wie bei Szenario 23. Breit oben ansetzen und nach unten hin schmaler werden, um der KI die korrekte biologische Richtung vorzugeben."
+    "positive": "anthro dragon, draconic humanoid, 1girl, female, elegant plated reptile scales, sleek wings on back, horns, volcanic background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, male, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Fügt die detaillierte, unzensierte weibliche Genitalstruktur an einer eleganten, weiblichen Drachen-Kriegerin ein.\n\n🖌️ So malen: Exakt dieselbe Dreiecks-Maske wie beim männlichen Gegenstück. Breit oben ansetzen und nach unten hin schmaler werden, um der KI die korrekt biologische Richtung vorzugeben."
   },
-  "satyr": {
-    "body_type": "satyr",
-    "special_skin": "shaggy fur",
+  "kitsune male": {
+    "body_type": "humanoid",
+    "special_skin": "sleek fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, satyr, faun, male, human torso, muscular hairy goat legs with hooves, curved horns, ancient forest background, explicit detailed equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, warm rim lighƟng, masterpiece",
-    "negative": "modern items, anime, cartoon, comic, blurry, low quality, female, human_penis",
-    "info": "💡 Was passieren soll: Erzeugt an einem männlichen Satyr (Ziegenbeine und Hufe) die unzensierte, schwere Pferde-Anatomie im stolzen Bogen nach unten.\n\n🖌️ So malen: Male direkt am HüŌansatz zwischen den behaarten Ziegenbeinen zwei dicke Kreise nebeneinander für den schweren Hodensack vor. Danach den massiven Balken schräg nach unten wegziehen."
+    "positive": "jackalfolk, 1boy, male, slender athletic muscular build, short pitch black fur, egyptian god aesthetics, gold ornaments, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, dramatic lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
+    "info": "💡 Was passieren soll: Für einen athletischen Schakal-Menschen im ägyptischen Stil. Bringt die adrige Caniden-Anatomie mit Schwellknoten fehlerfrei ein.\n\n🖌️ So malen: Setze die Maske am Becken an, male dort als Erstes einen dicken, kreisrunden Fleck auf (für den caniden Knoten) und ziehe von diesem Kreis aus einen schmaleren Bogen nach vorne-unten weg."
   },
-   "satyr female": {
-    "body_type": "satyr",
-    "special_skin": "shaggy fur",
+  "kitsune female": {
+    "body_type": "humanoid",
+    "special_skin": "sleek fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, satyr, faun, female, beautiful human torso, slender hairy goat legs with hooves, elegant small horns, ancient forest background, explicit detailed equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, detailed_veins, large_testicles, warm rim lighting, masterpiece",
-    "negative": "modern items, anime, cartoon, comic, blurry, low quality, male, human_penis",
-    "info": "💡 Was passieren soll: Fügt die unzensierte, aufgerichtete Pferde-Anatomie an einer zierlichen, weiblichen Faun-Kreatur ein.\n\n🖌️ So malen: Zwei verbundene rosa Kreise an der Basis für die Hoden aufmalen, gefolgt von einem dicken Schaft, der schräg nach unten in die Luft ragt und am Ende pilzförmig dicker wird."
+    "positive": "jackalfolk, 1girl, female, slender graceful build, short pitch black fur, egyptian queen aesthetics, gold ornaments, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, labia minora, clitoris, pink interior texture, moist and wet, dramatic lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, male, dog_penis, penis, phallus, testicles, balls, scrotum",
+    "info": "💡 Was passieren soll: Erzeugt die markante Caniden-Anatomie mit dem typischen Knoten an einer grazilen Schakal-Königin mit pechschwarzem Fell.\n\n🖌️ So malen: Erst der fette rosa Kreis direkt am Körper für den Schwellknoten, danach der geschwungene Strich nach vorne-unten in den Luftraum."
   },
-  "anthro bear": {
+  "anthro bear male": {
     "body_type": "anthro",
     "special_skin": "thick fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro bear, ursine, male, colossal muscular build, thick heavy brown fur, massive claws, snowy mountain background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, volumetric lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, low quality, female, human_penis",
+    "positive": "anthro bear, ursine, 1boy, male, colossal muscular build, thick heavy brown fur, massive claws, snowy mountain background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, volumetric lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, female, vagina, pussy, female_genitalia",
     "info": "💡 Was passieren soll: Für ein kolossales, massives Bärenwesen. Fügt die schwere Caniden-Anatomie mit stark ausgeprägtem Knoten wuchtig ein.\n\n🖌️ So malen: Da Bärenwesen extrem wuchtig sind, male den rosa Kreis an der Basis und den anschließenden Schaft nach vorne-unten von vornherein deutlich dicker und breiter, damit die Proportionen zum massiven Körper passen."
   },
   "anthro bear female": {
     "body_type": "anthro",
     "special_skin": "thick fur",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, anthro bear, ursine, female, large powerful feminine build, thick glossy winter fur, snowy mountain background, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, volumetric lighting, masterpiece",
-    "negative": "anime, cartoon, comic, blurry, low quality, male, human_penis",
+    "positive": "anthro bear, ursine, 1girl, female, large powerful feminine build, thick glossy winter fur, snowy mountain background, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, volumetric lighting, masterpiece",
+    "negative": "anime, cartoon, comic, blurry, low quality, male, dog_penis, penis, phallus, testicles, balls, scrotum",
     "info": "💡 Was passieren soll: Erzeugt die markante Caniden-Anatomie an einer großen, kraftvollen Bären-Frau mit dichtem Winterfell.\n\n🖌️ So malen: Den dicken rosa Kreis für den Knoten direkt im Schritt ansetzen und den breiten Strich schwungvoll nach vorne-unten in den leeren Raum zeichnen."
   },
-  "marble sculpture": {
+  "marble sculpture male": {
     "body_type": "None",
     "special_skin": "None",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, detailed white marble sculpture, polished marble texture, carved stone statue, smooth glossy stone surface, massive defining muscle lines, fine chiseled artistic details, dynamic dramatic lighting, volumetric shadows, masterpiece",
-    "negative": "human skin, blood vessels, veins, organic tissue, flesh, fur, hair, body hair, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "positive": "score_9, score_8_up, score_7_up, masterpiece, best quality, white marble statue, classical marble sculpture, entire figure carved from white Carrara marble, solid stone sculpture, visible carved stone, polished white marble surface, subtle natural marble veining, realistic marble material, intricate chiseled details, finely sculpted anatomy, clearly defined muscles carved into stone, sculpted hair, sculpted facial features, classical Greek and Roman sculpture, museum-quality marble sculpture, three-dimensional sculpture, dramatic museum lighting, strong sculptural shadows, highly detailed",
+    "negative": "photograph, photo, photorealistic person, real human, real skin, skin texture, flesh, living person, soft tissue, fabric, clothing, fur, hair strands, plastic, rubber, metal, wood, colorful, painted, cartoon, anime, 3d render",
     "info": "💡 Was passieren soll: Verwandelt deinen maskierten Körper (oder die Beine) in eine edle, weiß-grau gemaserte Museums-Skulptur mit glatter, polierter Steinoberfläche und scharfen Meißelkanten.\n\n🖌️ So malen: Ziehe die lila Maske über den Bereich, der zu Stein werden soll. Wenn der Übergang perfekt an deinem echten nackten Bauch ansetzen soll, male die Maske ruhig ein kleines Stück über deine Gürtellinie hoch.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.80 ein! Bei 0.80 behält die KI die echten, trainierten Muskelformen deines iPhone-Fotos perfekt bei, hat aber genug Kraft, um die Hautoberfläche komplett in kalten, glänzenden Marmor umzuwandeln."
   },
-  "liquid silver": {
+  "marble sculpture female": {
     "body_type": "None",
     "special_skin": "None",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, detailed liquid silver body, polished chrome texture, reflective liquid metal sculpture, smooth melting metallic surface, fluid chrome ripples, dynamic high-contrast studio lighting, mirror reflections, sharp metal edges, masterpiece",
-    "negative": "human skin, pores, flesh, organic tissue, fur, hair, body hair, clothing, canvas texture, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
-    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Körper in flüssiges, spiegelndes Chrom/Silber, exakt wie der T-1000 aus Terminator. Es erzeugt extreme, gleißende Lichtreflexe und eine fließende, metallische Oberfläche.\n\n🖌️ So malen: Übermale die Zone großzügig lila. Da flüssiges Metall stark spiegelt, zieht sich die Infill-Methode das weiße Licht deiner Leinwand und baut daraus gleißende Chrom-Kanten.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.80 - 0.85! Das Metall braucht viel Kraft, um deine echte Hautstruktur komplett aufzulösen und in spiegelndes Chrom zu verwandeln."
+    "positive": "score_9, score_8_up, score_7_up, masterpiece, best quality, 1girl, female, white marble statue, classical marble sculpture, entire figure carved from white Carrara marble, solid stone sculpture, visible carved stone, polished white marble surface, subtle natural marble veining, realistic marble material, intricate chiseled details, finely sculpted female anatomy, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, sculpted hair, sculpted facial features, classical Greek and Roman sculpture, museum-quality marble sculpture, three-dimensional sculpture, dramatic museum lighting, strong sculptural shadows, highly detailed",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, photograph, photo, photorealistic person, real human, real skin, skin texture, flesh, living person, soft tissue, fabric, clothing, fur, hair strands, plastic, rubber, metal, wood, colorful, painted, cartoon, anime, 3d render",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Körper in eine edle, weiß-grau gemaserte Museums-Skulptur einer Frau aus kühlem Carrara-Marmor.\n\n🖌️ So malen: Übermale den Übergangsbereich am Becken großflächig als umgedrehtes Dreieck. Oben breit ansetzen und nach unten hin spitz auslaufen lassen."
   },
-  "mechanical": {
+  "liquid silver male": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1boy, male, detailed liquid silver body, polished chrome texture, reflective liquid metal sculpture, smooth melting metallic surface, fluid chrome ripples, dynamic high-contrast studio lighting, mirror reflections, sharp metal edges, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, pores, flesh, organic tissue, fur, hair, body hair, clothing, canvas texture, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Körper in flüssiges, spiegelndes Chrom/Silber (männliche Form), exakt wie der T-1000 aus Terminator. Es erzeugt extreme, gleißende Lichtreflexe und eine fließende, metallische Oberfläche.\n\n🖌️ So malen: Übermale die Zone großzügig lila. Da flüssiges Metall stark spiegelt, zieht sich die Infill-Methode das weiße Licht deiner Leinwand und baut daraus gleißende Chrom-Kanten.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.80 - 0.85! Das Metall braucht viel Kraft, um deine echte Hautstruktur komplett aufzulösen und in spiegelndes Chrom zu verwandeln."
+  },
+  "liquid silver female": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1girl, female, detailed liquid silver body, elegant feminine curves, polished chrome texture, reflective liquid metal sculpture, smooth melting metallic surface, fluid chrome ripples, dynamic high-contrast studio lighting, mirror reflections, sharp metal edges, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, pores, flesh, organic tissue, fur, hair, body hair, clothing, canvas texture, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Körper in flüssiges, spiegelndes Chrom/Silber mit eleganten, weiblichen Formen. Es erzeugt extreme, gleißende Lichtreflexe und eine fließende, metallische Oberfläche.\n\n🖌️ So malen: Übermale die Zone großzügig lila. Da flüssiges Metall stark spiegelt, zieht sich die Infill-Methode das weiße Licht deiner Leinwand und baut daraus gleißende Chrom-Kanten.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.80 - 0.85! Das Metall braucht viel Kraft, um deine echte Hautstruktur komplett aufzulösen und in spiegelndes Chrom zu verwandeln."
+  },
+  "mechanical male": {
     "body_type": "mechanical",
     "special_skin": "None",
     "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, detailed polished wooden sculpture, rich dark mahogany wood grain texture, carved timber statue, chiseled wooden surface, visible tree rings, smooth varnished wood finish, organic wood lines, dynamic dramatic lighting, volumetric shadows, masterpiece",
-    "negative": "human skin, organic skin pores, flesh, meat, blood vessels, veins, fur, hair, clothing, metal, plastic, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "positive": "1boy, male, detailed polished wooden sculpture, rich dark mahogany wood grain texture, carved timber statue, chiseled wooden surface, visible tree rings, smooth varnished wood finish, organic wood lines, dynamic dramatic lighting, volumetric shadows, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, organic skin pores, flesh, meat, blood vessels, veins, fur, hair, clothing, metal, plastic, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
     "info": "💡 Was passieren soll: Verwandelt dich in eine hölzerne Kreatur, als wärst du aus einem einzigen, edlen Stück Holz geschnitzt. Zeigt feine, polierte Holzmaserungen, Jahresringe, Astlöcher und edle Schnitzkanten.\n\n🖌️ So malen: Übermale deine Beine oder den Schritt komplett rosa. Der Übergang am Bauch wirkt besonders genial, wenn du den Pinsel unregelmäßig (zackig) ansetzt, als würde das Holz direkt aus deiner nackten Haut herauswachsen.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.75! Bei 0.75 behält die KI deine trainierten Muskelformen des iPhone-Fotos bei, stanzt aber die wunderschöne, dunkle Holzmaserung exakt in den Verlauf deiner Muskelstränge hinein."
   },
-  "cyborg": {
+  "mechanical female": {
+    "body_type": "mechanical",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, detailed polished wooden sculpture, rich dark mahogany wood grain texture, carved timber statue, chiseled wooden surface, visible tree rings, smooth varnished wood finish, elegant feminine curves, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, organic wood lines, dynamic dramatic lighting, volumetric shadows, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, organic skin pores, flesh, meat, blood vessels, veins, fur, hair, clothing, metal, plastic, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt dich in eine hölzerne Frauen-Kreatur mit fein polierten Holzmaserungen und präzisen Schnitzkanten.\n\n🖌️ So malen: Übermale den Intimbereich ab der Hüfte abwärts als umgedrehtes Dreieck (oben breit, unten spitz)."
+  },
+  "cyborg male": {
     "body_type": "cyborg",
     "special_skin": "None",
     "denoising": 0.78,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, highly detailed cybernetic android body, mechanical robot joints, polished titanium plates, carbon fiber textures, exposed copper wires, glowing neon conduits, intricate hydraulic pistons, smooth synthetic surface, cinematic sci-fi lighting, masterpiece",
-    "negative": "human skin, organic tissue, flesh, veins, blood, fur, hair, wood, stone, clothing, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
-    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in eine hochdetaillierte, unzensierte Robotik-Struktur aus glänzendem Titan, Carbon-Platten, freiliegenden Hydraulik-Zylindern und leuchtenden LED-Kabeln.\n\n🖌️ So malen: Übermale deine Beine und die Genitalzone komplett rosa. Ziehe die Maske am Bauch ruhig in unregelmäßigen, zackigen Linien hoch. Das sieht dann so aus, als würde deine echte Haut am Bauch aufreißen und darunter die kybernetische Struktur zum Vorschein kommen!\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.78 - 0.82! Das gibt der KI genug Kraft, um die Haut in glänzendes Metall umzubauen, behält aber die perfekte, scharfe Form deiner Beine für den Slicer und den 3D-Drucker bei."
+    "positive": "1boy, male, highly detailed cybernetic android body, mechanical robot joints, polished titanium plates, carbon fiber textures, exposed copper wires, glowing neon conduits, intricate hydraulic pistons, smooth synthetic surface, sci-fi lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, organic tissue, flesh, veins, blood, fur, hair, wood, stone, clothing, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in eine hochdetaillierte, unzensierte Robotik-Struktur aus glänzendem Titan, Carbon-Platen, freiliegenden Hydraulik-Zylindern und leuchtenden LED-Kabeln für einen männlichen Androiden.\n\n🖌️ So malen: Übermale deine Beine und die Genitalzone komplett rosa. Ziehe die Maske am Bauch ruhig in unregelmäßigen, zackigen Linien hoch. Das sieht dann so aus, als würde deine echte Haut am Bauch aufreißen und darunter die kybernetische Struktur zum Vorschein kommen!\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.78 - 0.82! Das gibt der KI genug Kraft, um die Haut in glänzendes Metall umzubauen, behält aber die perfekte, scharfe Form deiner Beine für den Slicer und den 3D-Drucker bei."
   },
-  "deer taur": {
+  "cyborg female": {
+    "body_type": "cyborg",
+    "special_skin": "None",
+    "denoising": 0.78,
+    "positive": "1girl, female, highly detailed cybernetic android body, mechanical robot joints, polished titanium plates, carbon fiber textures, exposed copper wires, glowing neon conduits, intricate hydraulic pistons, smooth synthetic surface, elegant feminine robotic curves, sci-fi lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, organic tissue, flesh, veins, blood, fur, hair, wood, stone, clothing, score_6, score_5, score_4, rating_source_anime, rating_source_cartoon, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in eine hochdetaillierte, feminine Robotik-Struktur aus glänzendem Titan, Carbon-Platten, freiliegenden Hydraulik-Zylindern und leuchtenden LED-Kabeln mit eleganten weiblichen Kurven.\n\n🖌️ So malen: Übermale deine Beine und die Genitalzone komplett rosa. Ziehe die Maske am Bauch in unregelmäßigen, zackigen Linien hoch, als würde die echte Haut aufreißen.\n\n🎛️ Regler-Trick: Stelle die Denoising Strength rechts auf genau 0.78 - 0.82! Das gibt der KI genug Kraft, um die Haut in glänzendes Metall umzubauen, behält aber die perfekte, scharfe Form deiner Beine bei."
+  },
+  "deer taur male": {
     "body_type": "deer taur",
     "special_skin": "None",
     "denoising": 0.78,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, highly detailed leshy deity body, celtic myth creature, skin textured with ancient moss and tree bark, muscular legs wrapped in twisting roots, glowing green runes, explicit detailed equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, large testicles, dark misty forest background, volumetric god rays, masterpiece",
-    "negative": "human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality, metal, plastic",
-    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein uraltes Waldwesen. Es kombiniert Moos, knorrige Wurzeln und Waldboden, aus denen eine majestätische, unzensierte Hirsch-Anatomie (Equiden-Stil) im stolzen Bogen entspringt.\n\n🖌️ So malen: Im Schritt ansetzen und den rosa Bogen nach vorne-unten in die Luft ziehen. Die Beine bis zum Boden komplett rosa ausmalen.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.78."
+    "positive": "1boy, male, highly detailed leshy deity body, celtic myth creature, skin textured with ancient moss and tree bark, muscular legs wrapped in twisting roots, glowing green runes, explicit detailed equine_genitalia, horse_penis, fully_erect, pointing_downwards, thick_glans_ridge, large testicles, dark misty forest background, volumetric god rays, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality, metal, plastic",
+    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein uraltes, männliches Waldwesen. Es kombiniert Moos, knorrige Wurzeln und Waldboden, aus denen eine majestätische, unzensierte Hirsch-Anatomie (Equiden-Stil) im stolzen Bogen entspringt.\n\n🖌️ So malen: Im Schritt ansetzen und den rosa Bogen nach vorne-unten in die Luft ziehen. Die Beine bis zum Boden komplett rosa ausmalen.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.78."
   },
-  "lycanthrope alternate": {
-    "body_type": "lycanthrope",
-    "special_skin": "thick fur",
-    "denoising": 0.75,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, highly detailed anubis jackal humanoid, slender athletic muscular legs with sleek short pitch-black fur, digitigrade legs, sharp black claws, golden ankle bands, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, cinematic studio lighting, masterpiece",
-    "negative": "human_penis, human_genitalia, canine_face, dog_face, snout, anime, cartoon, comic, manga, blurry",
-    "info": "💡 Was passieren soll: Perfekt für die A-Pose vor deiner weißen Leinwand. Verwandelt deine nackten Beine in die extrem schlanken, sehnigen und pechschwarzen Läufe des ägyptischen Gottes Anubis, kombiniert mit der adrigen Caniden-Anatomie inklusive Schwellknoten.\n\n🖌️ So malen: Erst der dicke, fette rosa Kreis direkt am Körper für den Knoten, danach der geschwungene Strich nach vorne-unten in den Luftraum.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.75."
+  "deer taur female": {
+    "body_type": "deer taur",
+    "special_skin": "None",
+    "denoising": 0.78,
+    "positive": "1girl, female, highly detailed leshy deity body, celtic myth creature, elegant feminine curves, skin textured with ancient moss and tree bark, slender legs wrapped in twisting roots, glowing green runes, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, dark misty forest background, volumetric god rays, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, horse_penis, equine_genitalia, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality, metal, plastic",
+    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein elegantes, weibliches Waldwesen aus Wurzeln und Moos, kombiniert mit perfekt geöffneter, unzensierter weiblicher Anatomie.\n\n🖌️ So malen: Die Genitalzone im Schritt großflächig als umgedrehtes Dreieck (oben breit, unten spitz) übermalen. Die Beine nach Wunsch bis zum Boden rosa ausmalen für die Wurzel-Textur.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.78."
   },
-  "lion taur": {
+  "lion taur male": {
     "body_type": "lion taur",
     "special_skin": "thick fur",
     "denoising": 0.80,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, highly detailed manticore body, massive muscular lion lower body, dense golden fur texture, sharp feline claws, explicit feline_genitalia, large heavy alpha feline anatomy, thick glans, dynamic dramatic shadow casting, volumetric lighting, masterpiece",
-    "negative": "human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
-    "info": "💡 Was passieren soll: Erzeugt ab deiner Hüfte den mächtigen, gold-braun gefallenen Körper eines Löwen (Feline-Anatomie). Die Muskeln sind extrem wuchtig und die Anatomie fügt sich perfekt in das schwere Raubkatzen-Gewebe ein.\n\n🖌️ So malen: Da Löwen extrem wuchtige Beckenknochen haben, male an der Basis zwei kräftige Kreise nebeneinander auf und ziehe das Glied dick nach unten weg.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.80."
+    "positive": "1boy, male, highly detailed manticore body, massive muscular lion lower body, dense golden fur texture, sharp feline claws, explicit feline_genitalia, large heavy alpha feline anatomy, thick glans, dynamic dramatic shadow casting, volumetric lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt ab deiner Hüfte den mächtigen, gold-braun gefallenen Körper eines Löwen (Feline-Anatomie). Die Muskeln sind extrem wuchtig und die Anatomie fügt sich perfekt in das schwere Raubkatzen-Gewebe ein.\n\n🖌️ So malen: Da Löwen extrem wuchtige Beckenknochen haben, male an der Basis zwei kräftige Kreise nebeneinander auf und ziehe das Glied dicker nach unten weg.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.80."
   },
-  "amorphous": {
+  "lion taur female": {
+    "body_type": "lion taur",
+    "special_skin": "thick fur",
+    "denoising": 0.80,
+    "positive": "1girl, female, highly detailed manticore body, powerful muscular lioness lower body, dense sleek golden fur texture, sharp feline claws, explicit feline_genitalia, feline_vulva, detailed female lion anatomy, dynamic dramatic shadow casting, volumetric lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, feline_penis, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt ab deiner Hüfte den eleganten, kraftvollen Unterkörper einer Löwin mit unzensierter, perfekt ausgeprägter weiblicher Raubkatzen-Anatomie.\n\n🖌️ So malen: Das lila Dreieck direkt im Schritt ansetzen. Oben an der Basis breit malen und im eleganten, flachen Verlauf nach unten hin spitz auslaufen lassen.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.80."
+  },
+  "amorphous male": {
     "body_type": "amorphous",
     "special_skin": "None",
     "denoising": 0.82,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, highly detailed cosmic cthulhu entity body, void creature, slimy dark purple alien skin texture, glistening moist leather, subtle writhing tentacles along the thighs, rock hard fully erect anatomy pointing downwards at an aggressive stiff angle, heavy wrinkled scrotum base, prominent pulsing veins, cinematic dark sci-fi lighting, masterpiece",
-    "negative": "human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
-    "info": "💡 Was passieren soll: Für den ultimativen Albtraum-Look. Verwandelt deinen Unterkörper in ein tentakelartiges Lovecraft-Wesen aus tiefviolettem, nass glänzendem Echsenleder, bei dem die unzensierte Anatomie (Boviden-/Rinder- Stil) massiv im steifen Winkel herausbricht.\n\n🖌️ So malen: Zeichne eine dicke, wuchtige Masken-Silhouette stramm schräg nach unten in den Raum.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.82."
+    "positive": "1boy, male, highly detailed cosmic cthulhu entity body, void creature, slimy dark purple alien skin texture, glistening moist leather, subtle writhing tentacles along the thighs, rock hard fully erect anatomy pointing downwards at an aggressive stiff angle, heavy wrinkled scrotum base, prominent pulsing veins, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Für den ultimativen Albtraum-Look. Verwandelt deinen Unterkörper in ein tentakelartiges Lovecraft-Wesen aus tiefviolettem, nass glänzendem Echsenleder, bei dem die unzensierte männliche Anatomie (Boviden-/Rinder-Stil) massiv im steifen Winkel herausbricht.\n\n🖌️ So malen: Zeichne eine dicke, wuchtige Masken-Silhouette stramm schräg nach unten in den Raum.\n\n🎛️ Regler-Trick: Denoising rechts auf 0.82."
   },
-  "werewolf alternate": {
+  "amorphous female": {
+    "body_type": "amorphous",
+    "special_skin": "None",
+    "denoising": 0.82,
+    "positive": "1girl, female, highly detailed cosmic cthulhu entity body, void creature, slimy dark purple alien skin texture, glistening moist leather, subtle writhing tentacles along the thighs, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human_penis, human_genitalia, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein unheimliches, tentakelartiges Alien-Wesen aus nass glänzendem, violettem Leder mit einer extrem detaillierten, feuchten und unzensierten weiblichen Anatomie.\n\n🖌️ So malen: Übermale die gesamte Intimzone großflächig als umgedrehtes Dreieck (oben breit am Bauch, nach unten hin spitz auslaufend zwischen den Oberschenkel-Tentakeln).\n\n🎛️ Regler-Trick: Denoising rechts auf 0.82."
+  },
+  "werewolf alternate male": {
     "body_type": "werewolf",
     "special_skin": "fluffy fur",
     "denoising": 0.85,
-    "positive": "score_9, score_8_up, score_7_up, rating_explicit, (photorealistic raw photo:1.3), shot on iPhone 15 Pro, wearing a bulky neon-colored werewolf fursuit costume bottom, mascot pants, oversized plush paws, fake faux fur, convention floor background, funny contrast, masterpiece",
-    "negative": "real animal fur, organic wet fur, realistic blood vessels, veins, muscle shading, dark fantasy, horror, score_6, score_5, score_4",
-    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in ein klobiges, farbenfrohes Maskottchen-Plüschkostüm (Fursuit), während dein nackter Oberkörper menschlich bleibt.\n\n🎛️ Regler-Einstellung: Denoising Strength rechts auf 0.85 stellen."
+    "positive": "1boy, male, wearing a bulky neon-colored werewolf fursuit costume bottom, mascot pants, oversized plush paws, fake faux fur, convention floor background, funny contrast, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, real animal fur, organic wet fur, realistic blood vessels, veins, muscle shading, dark fantasy, horror, score_6, score_5, score_4",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in ein klobiges, farbenfrohes Maskottchen-Plüschkostüm (Fursuit) für einen männlichen Charakter, während dein nackter Oberkörper menschlich bleibt.\n\n🎛️ Regler-Einstellung: Denoising Strength rechts auf 0.85 stellen."
+  },
+  "werewolf alternate female": {
+    "body_type": "werewolf",
+    "special_skin": "fluffy fur",
+    "denoising": 0.85,
+    "positive": "1girl, female, wearing a bulky neon-colored werewolf fursuit costume bottom, mascot pants, oversized plush paws, fake faux fur, convention floor background, funny contrast, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, real animal fur, organic wet fur, realistic blood vessels, veins, muscle shading, dark fantasy, horror, score_6, score_5, score_4",
+    "info": "💡 Was passieren soll: Verwandelt deinen maskierten Unterkörper in ein klobiges, farbenfrohes Maskottchen-Plüschkostüm (Fursuit) mit weiblicher Passform, während dein nackter Oberkörper menschlich bleibt.\n\n🎛️ Regler-Einstellung: Denoising Strength rechts auf 0.85 stellen."
+  },
+  "zombie male": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1boy, male, zombie, undead creature, decaying green skin texture, exposed muscle tissue, subtle bone structures, realistic rotting details, pale clouded eyes, dynamic dark horror lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, healthy human skin, soft smooth skin, glow, pristine body, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt den maskierten Bereich in verwestes, grünliches Zombie-Fleisch mit sichtbaren Muskelsträngen und Knochenstrukturen.\n\n🖌️ So malen: Übermale die gewünschte Zone großflächig. Funktioniert besonders gut, wenn du die Ränder unregelmäßig und ausgefranst malst, damit der Übergang zur gesunden Haut schaurig-realistisch wirkt."
+  },
+  "zombie female": {
+    "body_type": "None",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, zombie, undead creature, decaying green skin texture, exposed muscle tissue, subtle bone structures, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, pink interior texture, moist and wet, dynamic dark horror lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, healthy human skin, soft smooth skin, glow, pristine body, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt im maskierten Bereich die unzensierte weibliche Anatomie im düsteren, verwesten Zombie- und Untoten-Look mit nasser, grünlicher Gewebestruktur.\n\n🖌️ So malen: Setze die Maske am Becken als umgedrehtes Dreieck an (oben am Bauch breit, nach unten hin spitz auslaufend)."
+  },
+  "spider anthro male": {
+    "body_type": "anthro",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1boy, male, anthro spider, arachnid humanoid, multiple shiny black eyes, chitinous armor plates, deep dark carapace texture, subtle extra spider legs along the torso, sharp jointed appendages, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, human clothes, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt den Unterkörper in eine unheimliche, männliche Spinnen-Kreatur mit glänzenden Chitinplatten und voll ausgeprägter, aufgerichteter Anatomie.\n\n🖌️ So malen: Setze die lila Maske am Hüftansatz an. Zwei dicke Kreise nebeneinander für die Hoden vorzeichnen, danach den massiven Schaft stramm nach unten wegziehen."
+  },
+  "spider anthro female": {
+    "body_type": "anthro",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, anthro spider, arachnid humanoid, multiple shiny black eyes, elegant chitinous armor plates, deep dark carapace texture, graceful curves, subtle extra spider legs along the torso, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, human clothes, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt an einem tiefdunklen, schimmernden Spuppen-Unterkörper die detaillierte, unzensierte weibliche Anatomie mit glänzenden Chitin-Segmenten.\n\n🖌️ So malen: Übermale die gesamte Intimzone großflächig als umgedrehtes Dreieck. Oben breit am Schambein ansetzen und nach unten hin spitz auf den Schuppen/Chitinplatten auslaufen lassen."
+  },
+    "alien male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1boy, male, alien creature, extraterrestrial humanoid, smooth elongated head, glossy dark obsidian skin texture, biomechanical ribbing, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, sci-fi studio lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, clothes, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt den Unterkörper in eine außerirdische Kreatur aus glänzendem, dunklem Obsidian-Gewebe mit aufgerichteter Anatomie.\n\n🖌️ So malen: Setze am Becken an, male zwei Kreise für die Basis und ziehe den Schaft gerade nach unten weg."
+  },
+  "alien female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1girl, female, alien creature, extraterrestrial humanoid, glossy dark obsidian skin texture, elegant biomechanical curves, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, sci-fi studio lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, clothes, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt an einem außerirdischen, glänzenden Alien-Unterkörper die detaillierte, unzensierte weibliche Anatomie.\n\n🖌️ So malen: Die Intimzone großflächig als umgedrehtes Dreieck (oben breit, unten spitz) übermalen."
+  },
+  "demon male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1boy, male, demon, incubus, dark crimson skin texture, muscular thighs, obsidian claws, demonic spade-tipped tail coiling at the base, rock hard fully erect anatomy pointing downwards at an aggressive stiff angle, heavy wrinkled scrotum base, prominent pulsing veins, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, human_penis, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt die unzensierte, schwere dämonische Anatomie (Boviden-Stil) an einem Charakter mit tiefroter Haut und einem geschwungenen Schwanz.\n\n🖌️ So malen: Eine kräftige Masken-Silhouette stramm schräg nach unten in den Raum zeichnen."
+  },
+  "demon female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, demon, succubus, dark crimson skin texture, elegant voluptuous curves, demonic spade-tipped tail coiling at the base, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Fügt die unzensierte weibliche Genitalstruktur an einer kurvigen Dämonin mit purpurroter oder karmesinroter Haut ein.\n\n🖌️ So malen: Die Intimzone als umgedrehtes Dreieck übermalen. Der Schwanz wird von der KI automatisch außerhalb der Maske angesetzt."
+  },
+  "slime male": {
+    "body_type": "amorphous",
+    "special_skin": "None",
+    "denoising": 0.85,
+    "positive": "1boy, male, slime creature, gelatinous humanoid, translucent glowing blue slime body, visible bubbles inside, glossy melting liquid surface, fluid ripples along the thighs, fully erect translucent anatomy pointing downwards, heavy melting base, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, bones, internal organs, skeleton, veins, fur, clothing, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Verwandelt deine Beine und den Schritt komplett in halbtransparenten, leuchtend blauen Schleim, aus dem sich die Anatomie flüssig formt.\n\n🖌️ So malen: Übermale den gesamten Bereich großzügig. Da Schleim fließt, darf die Maske ruhig dicker und weicher aufgetragen werden."
+  },
+  "slime female": {
+    "body_type": "amorphous",
+    "special_skin": "None",
+    "denoising": 0.85,
+    "positive": "1girl, female, slime creature, gelatinous humanoid, translucent glowing pink slime body, visible bubbles inside, glossy melting liquid surface, elegant fluid curves, explicit detailed translucent female genitalia, wide open slime pussy lips, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, bones, internal organs, skeleton, veins, fur, clothing, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Verwandelt die untere Hälfte in klebrigen, transparenten pinken Schleim mit perfekt geöffneter, feuchter Schleim-Anatomie.\n\n🖌️ So malen: Die Genitalzone großflächig als umgedrehtes Dreieck übermalen. Wichtig: Denoising muss für den Transparenz-Effekt hoch sein (0.85)!"
+  },
+    "golem male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1boy, male, golem, stone elemental, earth deity, body made of cracked granite and solid rocks, glowing magma veins between stone plates, heavy chiseled stone muscles, rock hard fully erect anatomy carved from stone pointing downwards, heavy stone scrotum base, dramatic ancient ruins lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, flesh, soft tissue, organic skin, clothing, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein massives Steinwesen (Golem/Elementar) aus rissigem Granit mit leuchtenden Magma-Adern und gemeißelter Stein-Anatomie.\n\n🖌️ So malen: Da Stein-Wesen extrem breit gebaut sind, male die lila Maske von vornherein deutlich dicker und wuchtiger auf."
+  },
+  "golem female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1girl, female, golem, stone elemental, body made of cracked granite and solid polished stones, elegant chiseled stone curves, glowing crystal veins between stone plates, explicit detailed stone female genitalia, fully visible wide open pussy lips carved from smooth marble, chiseled stone texture, dramatic ancient ruins lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, flesh, soft tissue, organic skin, clothing, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt ein mächtiges weibliches Stein-Elementar mit elegant gemeißelten Steinkurven und einer unzensierten, aus glattem Stein geformten weiblichen Anatomie.\n\n🖌️ So malen: Übermale die gesamte Intimzone großflächig als umgedrehtes Dreieck direkt auf der Steinstruktur."
+  },
+  "treant male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.78,
+    "positive": "1boy, male, treant, ent, forest deity, body made of ancient gnarled tree bark, twisƟng roots wrapping the thighs, glowing green celtic runes carved in wood, moss-textured skin, explicit detailed wooden equine_genitalia, horse_penis carved from dark oak, fully_erect, pointing_downwards, thick_glans_ridge, dark misty forest background, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, flesh, organic tissue, metal, plastic, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt deinen Unterkörper in ein uraltes Baumwesen (Ent/Treant) aus knorriger Rinde und Wurzeln, aus denen eine hölzerne Pferde-Anatomie entspringt.\n\n🖌️ So malen: Im Schritt ansetzen und den rosa Bogen schwungvoll nach vorne-unten in die Luft ziehen. Die Beine komplett ausmalen für die Rinden-Textur."
+  },
+  "treant female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.78,
+    "positive": "1girl, female, dryad, treant, forest spirit, elegant feminine body made of smooth ancient tree bark, leaves and twisƟng vines wrapping the thighs, moss-textured skin, explicit detailed female genitalia carved from wood, fully visible wide open pussy lips, organic wooden texture, dark misty forest background, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, flesh, organic tissue, metal, plastic, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt den Bereich in ein elegantes Baumwesen oder eine Dryade (Waldgeist) aus glatter Holzrinde und Ranken, kombiniert mit perfekt geöffneter, hölzerner weiblicher Anatomie.\n\n🖌️ So malen: Die Genitalzone im Schritt großflächig als umgedrehtes Dreieck (oben breit, unten spitz) übermalen."
+  },
+    "anubis male": {
+    "body_type": "humanoid",
+    "special_skin": "short fur",
+    "denoising": 0.75,
+    "positive": "1boy, male, anubis, jackalfolk, slender athletic muscular legs with sleek short pitch-black fur, jackal anatomy, egyptian god aesthetics, heavy gold ankle bands, ancient pharaoh ornaments, canine_genitalia, dog_penis, fully_erect, pointing_downwards, flared_knot_at_base, thick_glans_ridge, prominent_pulsing_veins, dramatic studio lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, canine_face, dog_face, snout, human skin, human_penis, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Perfekt für die A-Pose! Verwandelt deine Beine in die extrem schlanken, sehnigen und pechschwarzen Läufe des ägyptischen Gottes Anubis, kombiniert mit edlen Goldreifen und adriger Caniden-Anatomie.\n\n🖌️ So malen: Erst einen dicken, kreisrunden Fleck direkt am Körper aufmalen (für den caniden Schwellknoten). Von dort aus einen schmaleren Bogen nach vorne-unten wegziehen."
+  },
+  "anubis female": {
+    "body_type": "humanoid",
+    "special_skin": "short fur",
+    "denoising": 0.75,
+    "positive": "1girl, female, anubis, jackalfolk, slender graceful legs with sleek short pitch-black fur, jackal anatomy, egyptian queen aesthetics, elegant gold ankle bands, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, dramatic studio lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, canine_face, dog_face, snout, human skin, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Erzeugt an den eleganten, pechschwarzen Läufen einer grazilen Schakal-Königin mit ägyptischem Goldschmuck die unzensierte, feuchte weibliche Anatomie.\n\n🖌️ So malen: Die Intimzone großflächig als umgedrehtes Dreieck übermalen. Am Schambein sehr breit ansetzen, nach unten hin spitz auf dem schwarzen Fell auslaufen lassen."
+  },
+  "gargoyle male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1boy, male, gargoyle, demonic stone creature, gothic statue, rough ash-gray stone skin, cracked stone texture, massive claws, folded stone wings on back, rock hard fully erect drakonische anatomy carved from weathered stone pointing downwards, heavy stone testicles, cinematic cathedral roof lighting, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, flesh, soft tissue, organic skin, clothing, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Verwandelt den Bereich in einen düsteren, gotischen Gargoyle aus rauem, aschgrauem Stein mit schweren Krallen und gemeißelter, steinerner Anatomie.\n\n🖌️ So malen: Zeichne eine dicke, wuchtige Masken-Silhouette stramm schräg nach unten in den Raum."
+  },
+  "gargoyle female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.80,
+    "positive": "1girl, female, gargoyle, demonic stone creature, gothic statue, rough ash-gray stone skin, elegant weathered stone curves, folded stone wings on back, explicit detailed stone female genitalia, fully visible wide open pussy lips carved from rough granite, sharp stone textures, cinematic cathedral roof lighting, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, flesh, soft tissue, organic skin, clothing, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Fügt die unzensierte, aus rauem gotischem Granit geformte weibliche Anatomie an einer geflügelten Gargoyle-Kreatur ein.\n\n🖌️ So malen: Die Genitalzone im Schritt großflächig als umgedrehtes Dreieck (oben breit, unten spitz) übermalen."
+  },
+  "cyber glitch male": {
+    "body_type": "cyborg",
+    "special_skin": "None",
+    "denoising": 0.85,
+    "positive": "1boy, male, digital glitch entity, cyber virus creature, body decomposing into glowing neon wireframes and holographic voxels, matrix data streams flowing along the thighs, corrupt pixel textures, fully erect glowing neon energy anatomy pointing downwards, shimmering static fx, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, human skin, organic tissue, flesh, blood, fur, hair, wood, stone, clothing, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Extrem futuristisch! Verwandelt deine Beine in ein fehlerhaftes, digitales Hologramm (Glitch) aus leuchtenden Neon-Drahtgittern, Matrix-Codes und Pixel-Blöcken.\n\n🖌️ So malen: Übermale deine Beine und die Genitalzone großzügig rosa. Male die Ränder extrem zackig und lasse vereinzelte Punkte/Quadrate in die Luft stehen, damit der Pixel-Glitch-Effekt perfekt zündet."
+  },
+  "cyber glitch female": {
+    "body_type": "cyborg",
+    "special_skin": "None",
+    "denoising": 0.85,
+    "positive": "1girl, female, digital glitch entity, cyber virus creature, elegant feminine curves decomposing into glowing neon wireframes and holographic voxels, matrix data streams flowing along the thighs, corrupt pixel textures, explicit detailed translucent neon energy female genitalia, wide open glowing code pussy lips, shimmering static fx, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, human skin, organic tissue, flesh, blood, fur, hair, wood, stone, clothing, anime, cartoon, comic, manga, blurry",
+    "info": "💡 Was passieren soll: Verwandelt den Unterkörper in ein fehlerhaftes Daten-Hologramm aus leuchtenden Voxel-Strukturen mit einer perfekt geöffneten weiblichen Anatomie komplett aus reinem, strahlendem Neon-Code.\n\n🖌️ So malen: Die Intimzone als umgedrehtes Dreieck übermalen. Nutze den Pinsel an den äußeren Rändern ruhig sehr zackig und punktartig, um der KI Datenfehler vorzutäuschen."
+  },
+    "orc male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1boy, male, orc, green skin, heavy muscular orc build, thick veins, rough battle-scarred skin texture, muscular thighs, tribal ornaments, rock hard fully erect anatomy pointing downwards at an aggressive stiff angle, heavy wrinkled scrotum base, prominent pulsing veins, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, soft smooth skin, human skin, human_penis, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt die unzensierte, schwere und adrige männliche Anatomie an einem massiven Charakter mit olivgrüner oder graugrüner Orkhaut.\n\n🖌️ So malen: Zeichne eine kräftige, breite Masken-Silhouette stramm schräg nach unten in den Raum."
+  },
+  "orc female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, orc, green skin, powerful muscular feminine curves, rough battle-scarred skin texture, tribal ornaments, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, soft smooth skin, human skin, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Fügt die unzensierte weibliche Genitalstruktur an einer kraftvollen Ork-Kriegerin mit olivgrüner Haut ein.\n\n🖌️ So malen: Die Intimzone im Schritt großflächig als umgedrehtes Dreieck (oben breit, unten spitz) übermalen."
+  },
+  "angel male": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1boy, male, angel, celestial entity, majestic white feathered wings on back, pristine smooth glowing skin texture, elegant muscular build, bright divine rim lighting, male_genitalia, penis, fully_erect, pointing_downwards, prominent_glans_ridge, thick_corona_glandis, detailed_veins, large_testicles, masterpiece",
+    "negative": "1girl, female, vagina, pussy, female_genitalia, demonic features, claws, horns, rough skin, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Baut eine makellose, perfekt geformte männliche Anatomie an einem himmlischen, geflügelten Charakter mit sanft leuchtender Haut auf.\n\n🖌️ So malen: Setze am Hüftansatz an. Zwei dicke Kreise nebeneinander für die Hoden vorzeichnen, danach den massiven Schaft schräg nach unten wegziehen."
+  },
+  "angel female": {
+    "body_type": "humanoid",
+    "special_skin": "None",
+    "denoising": 0.75,
+    "positive": "1girl, female, angel, celestial spirit, majestic white feathered wings on back, pristine soft glowing skin texture, elegant feminine curves, bright divine rim lighting, explicit detailed female genitalia, fully visible wide open pussy, spreading pussy lips, explicitly visible labia minora and clitoris, pink interior texture, moist and wet, masterpiece",
+    "negative": "1boy, male, penis, phallus, testicles, balls, scrotum, demonic features, claws, horns, rough skin, anime, cartoon, comic, manga, blurry, low quality",
+    "info": "💡 Was passieren soll: Erzeugt die detaillierte, unzensierte weibliche Anatomie an einer eleganten, himmlischen Engelsgestalt mit perfekt glatter und leicht leuchtender Haut.\n\n🖌️ So malen: Die Intimzone großflächig als umgedrehtes Dreieck (oben breit am Bauch, nach unten hin spitz auslaufend) übermalen."
   }
+
 }
- 
