@@ -40,6 +40,10 @@ If you want to modify the code, Python 3.11+ is required.
    python main.py
    ```
 
+Settings behavior:
+The repository now ships with [prompt_settings.example.json](prompt_settings.example.json) as a neutral template.
+Your real GUI state is stored locally in [prompt_settings.local.json](prompt_settings.local.json), which is intentionally not tracked.
+
 ---
 
 ## 🛠️ Compiling the App (Creating your own .exe)

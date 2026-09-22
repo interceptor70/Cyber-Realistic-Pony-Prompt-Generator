@@ -1,4 +1,5 @@
 import argparse
+import copy
 import hashlib
 import re
 import sys
@@ -47,6 +48,39 @@ def get_neutral_reset_value(values, fallback_default=""):
         if preferred in ordered_values:
             return preferred
     return fallback_default
+
+
+def build_default_settings_template():
+    return {
+        "mode": "subject",
+        "seed": "42",
+        "person_count": "solo",
+        "duo_second_gender": "None",
+        "duo_second_pose": "Random",
+        "duo_second_expression": "Random",
+        "duo_second_body_type": "None",
+        "nsfw": False,
+        "subject_2_nsfw": False,
+        "photo_boost": False,
+        "nsfw_modifier": "",
+        "subject_2_nsfw_modifier": "",
+        "bondage": "",
+        "subject_2_bondage": "",
+        "bondage_enabled": False,
+        "subject_2_bondage_enabled": False,
+        "rating": "rating_safe",
+        "score_scheme": "default high",
+        "image_quality": "None",
+        "location": "Random",
+        "lighting": "Random",
+        "camera": "Random",
+        "sex_act": "None",
+        "sex_position": "None",
+        "use_break": True,
+        "custom_tags": "",
+        "extra_clothing_tags": "",
+        "checksum_store": {},
+    }
 
 
 def set_text_widget_text(text_widget, value):
@@ -984,7 +1018,8 @@ class PromptGui:
         self.status_text_label = None
         self.text = None
         self.prompt_preview = None
-        self.settings_path = Path(__file__).with_name("prompt_settings.json")
+        self.settings_template_path = Path(__file__).with_name("prompt_settings.example.json")
+        self.settings_path = Path(__file__).with_name("prompt_settings.local.json")
         self.checksum_store = {}
         self.prompt_checksum_var = tk.StringVar(value="")
         self.prompt_checksum_input_var = tk.StringVar(value="")
@@ -1395,7 +1430,14 @@ class PromptGui:
 
     def load_settings(self):
         if not self.settings_path.exists():
-            return
+            if self.settings_template_path.exists():
+                try:
+                    state = json.loads(self.settings_template_path.read_text(encoding="utf-8"))
+                    self.settings_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+                except Exception:
+                    return
+            else:
+                return
         try:
             with self.settings_path.open("r", encoding="utf-8") as fh:
                 state = json.load(fh)
