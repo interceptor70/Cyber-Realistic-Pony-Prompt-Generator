@@ -36,6 +36,112 @@ def sort_combo_values(values):
     return sorted(ordered, key=lambda item: (priority.get(item, 2), item.lower()))
 
 
+def sanitize_gui_text(value):
+    text = str(value or "")
+    return text.replace("\u019F", "ti").replace("\u0275", "ti")
+
+
+def get_neutral_reset_value(values, fallback_default=""):
+    ordered_values = [str(value).strip() for value in (values or []) if str(value).strip()]
+    for preferred in ("None", "Random"):
+        if preferred in ordered_values:
+            return preferred
+    return fallback_default
+
+
+def set_text_widget_text(text_widget, value):
+    if text_widget is None:
+        return
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert("1.0", sanitize_gui_text(value))
+    auto_grow_callback = getattr(text_widget, "_auto_grow_callback", None)
+    if callable(auto_grow_callback):
+        try:
+            text_widget.after_idle(auto_grow_callback)
+        except Exception:
+            pass
+    tag_sync_callback = getattr(text_widget, "_tag_sync_callback", None)
+    if callable(tag_sync_callback):
+        try:
+            text_widget.after_idle(tag_sync_callback)
+        except Exception:
+            pass
+
+
+def split_tag_text(value):
+    tags = []
+    seen = set()
+    for part in str(value or "").split(","):
+        text = sanitize_gui_text(part).strip()
+        if not text or text in {"None", "Random"}:
+            continue
+        lowered = text.lower()
+        if lowered in seen:
+            continue
+        seen.add(lowered)
+        tags.append(text)
+    return tags
+
+
+def compose_tag_text(tags):
+    return ", ".join(split_tag_text(", ".join(str(tag or "") for tag in (tags or []))))
+
+
+CANVAS_PROMPT_PREFIX = "score_9, score_8_up, score_7_up, rating_explicit, source_photography, raw photo, hyperrealistic"
+
+
+def compose_canvas_positive_prompt(bracket_tags, weight_value):
+    clean_tags = []
+    seen = set()
+    for tag in bracket_tags or []:
+        text = sanitize_gui_text(tag).strip()
+        if not text:
+            continue
+
+        lowered = text.lower()
+        if lowered in seen:
+            continue
+
+        seen.add(lowered)
+        clean_tags.append(text)
+
+    clean_weight = sanitize_gui_text(weight_value or "1.15").strip()
+    if not clean_weight:
+        clean_weight = "1.15"
+
+    final_prompt = f"{CANVAS_PROMPT_PREFIX}, ({', '.join(clean_tags)}:{clean_weight})"
+    final_prompt = re.sub(r"\s{2,}", " ", final_prompt)
+    final_prompt = re.sub(r"\s*,\s*", ", ", final_prompt)
+    final_prompt = re.sub(r",\s*,+", ", ", final_prompt)
+    final_prompt = re.sub(r"\(\s+", "(", final_prompt)
+    final_prompt = re.sub(r"\s+\)", ")", final_prompt)
+    return final_prompt.strip(" ,")
+
+
+def filter_blocked_canvas_character_tags(tags, blocked_values):
+    blocked_lower = {
+        sanitize_gui_text(value).strip().lower()
+        for value in blocked_values
+        if value is not None and not pony_nodes._is_ignored_value(value)
+    }
+
+    filtered_tags = []
+    seen = set()
+    for tag in tags or []:
+        text = sanitize_gui_text(tag).strip()
+        if not text:
+            continue
+
+        lowered = text.lower()
+        if lowered in blocked_lower or lowered in seen:
+            continue
+
+        seen.add(lowered)
+        filtered_tags.append(text)
+
+    return filtered_tags
+
+
 def append_nsfw_modifier_tag_standalone(nsfw_var_obj, text_widget):
     try:
         selected_tag = nsfw_var_obj.get().strip()
@@ -49,8 +155,7 @@ def append_nsfw_modifier_tag_standalone(nsfw_var_obj, text_widget):
                 new_text = current_text
         else:
             new_text = selected_tag
-        text_widget.delete("1.0", "end")
-        text_widget.insert("1.0", new_text)
+        set_text_widget_text(text_widget, new_text)
         nsfw_var_obj.set("None")
     except Exception as e:
         print(f"Fehler: {e}")
@@ -84,8 +189,7 @@ def remove_tags_from_text_widget(text_widget, tags_to_remove):
         remove_set = {tag.strip().lower() for tag in tags_to_remove if tag and tag != "None"}
         filtered_tags = [tag for tag in current_tags if tag.lower() not in remove_set]
         new_text = ", ".join(filtered_tags)
-        text_widget.delete("1.0", "end")
-        text_widget.insert("1.0", new_text)
+        set_text_widget_text(text_widget, new_text)
     except Exception as e:
         print(f"Fehler: {e}")
 
@@ -103,8 +207,7 @@ def append_bondage_tag_standalone(bondage_var_obj, text_widget):
                 new_text = current_text
         else:
             new_text = selected_tag
-        text_widget.delete("1.0", "end")
-        text_widget.insert("1.0", new_text)
+        set_text_widget_text(text_widget, new_text)
         bondage_var_obj.set("None")
     except Exception as e:
         print(f"Fehler: {e}")
@@ -137,6 +240,16 @@ PREVIEW_NSWF_TAGS = [
     ])
     if "fur" not in str(tag).lower()
 ]
+
+DEFAULT_NSWF_MASTER_LIST = sort_combo_values(["None", "Random", *PREVIEW_NSWF_TAGS])
+DEFAULT_BONDAGE_MASTER_LIST = sort_combo_values(["None", *BONDAGE_TAGS])
+
+_custom_tag_source_values = list(PREVIEW_NSWF_TAGS)
+for _section_values in getattr(pony_nodes, "NSFW_MODIFIER_SECTIONS", {}).values():
+    if isinstance(_section_values, (list, tuple, set)):
+        _custom_tag_source_values.extend(_section_values)
+_custom_tag_source_values.extend(BONDAGE_TAGS)
+DEFAULT_CUSTOM_TAG_MASTER_LIST = sort_combo_values(["None", "Random", *_custom_tag_source_values])
 
 FERAL_POSITIVE_TAGS = [
     "detailed animal fur",
@@ -320,8 +433,7 @@ def apply_preview_tag_highlights(text_widget, prompt_text):
         return
 
     text_widget.configure(state="normal", cursor="arrow", takefocus=0)
-    text_widget.delete("1.0", tk.END)
-    text_widget.insert("1.0", prompt_text)
+    set_text_widget_text(text_widget, prompt_text)
 
     text_widget.tag_configure("nsfw_highlight", background="#ffe0ea", foreground="#7a1f3f", font=("TkDefaultFont", 9, "bold"))
     text_widget.tag_configure("bondage_highlight", background="#e8e0ff", foreground="#3f2d73", font=("TkDefaultFont", 9, "bold"))
@@ -879,6 +991,15 @@ class PromptGui:
         self._preview_refresh_job = None
         self.preset_combo = None
         self.preset_info_text = None
+        self.nsfw_master_list = list(DEFAULT_NSWF_MASTER_LIST)
+        self.bondage_master_list = list(DEFAULT_BONDAGE_MASTER_LIST)
+        self.custom_tags_master_list = list(DEFAULT_CUSTOM_TAG_MASTER_LIST)
+        self.active_nsfw_tags = []
+        self.active_bondage_tags = []
+        self.active_custom_tags = []
+        self.nsfw_tags_container = None
+        self.bondage_tags_container = None
+        self.custom_tags_container = None
 
         try:
             with open("presets.json", "r", encoding="utf-8") as f:
@@ -1120,10 +1241,12 @@ class PromptGui:
             "nsfw": bool(self.nsfw_var.get()),
             "subject_2_nsfw": bool(self.subject_2_nsfw_var.get()),
             "photo_boost": bool(self.photo_boost_var.get()),
-            "nsfw_modifier": self.nsfw_modifier_var.get(),
-            "subject_2_nsfw_modifier": self.subject_2_nsfw_modifier_var.get(),
-            "bondage": self.bondage_var.get(),
-            "subject_2_bondage": self.subject_2_bondage_var.get(),
+            "nsfw_modifier": self._get_active_tags_text(self.field_widgets, "nsfw"),
+            "subject_2_nsfw_modifier": self._get_active_tags_text(self.duo_field_widgets, "nsfw"),
+            "bondage": self._get_active_tags_text(self.field_widgets, "bondage"),
+            "subject_2_bondage": self._get_active_tags_text(self.duo_field_widgets, "bondage"),
+            "bondage_enabled": bool(self.bondage_enabled_var.get()),
+            "subject_2_bondage_enabled": bool(self.subject_2_bondage_enabled_var.get()),
             "rating": self.rating_var.get(),
             "score_scheme": self.score_scheme_var.get(),
             "image_quality": self.image_quality_var.get(),
@@ -1133,7 +1256,7 @@ class PromptGui:
             "sex_act": self.sex_act_var.get(),
             "sex_position": self.sex_position_var.get(),
             "use_break": bool(self.use_break_var.get()),
-            "custom_tags": self._read_widget_value(self.custom_tags),
+            "custom_tags": self._read_widget_value(self.field_widgets.get("custom_tags_field")),
             "extra_clothing_tags": self._read_widget_value(self.extra_clothing_tags),
         }
         for key, widget in self.field_widgets.items():
@@ -1155,10 +1278,6 @@ class PromptGui:
             "duo_second_pose": self.duo_second_pose_var,
             "duo_second_expression": self.duo_second_expression_var,
             "duo_second_body_type": self.duo_second_body_type_var,
-            "nsfw_modifier": self.nsfw_modifier_var,
-            "subject_2_nsfw_modifier": self.subject_2_nsfw_modifier_var,
-            "bondage": self.bondage_var,
-            "subject_2_bondage": self.subject_2_bondage_var,
             "rating": self.rating_var,
             "score_scheme": self.score_scheme_var,
             "image_quality": self.image_quality_var,
@@ -1170,15 +1289,15 @@ class PromptGui:
         }
         for key, var in value_mapping.items():
             if key in state and state[key] is not None:
-                var.set(str(state[key]))
+                var.set(sanitize_gui_text(state[key]))
 
         self.nsfw_var.set(bool(state.get("nsfw", False)))
         self.subject_2_nsfw_var.set(bool(state.get("subject_2_nsfw", False)))
         self.photo_boost_var.set(bool(state.get("photo_boost", False)))
-        self.nsfw_modifier_var.set(str(state.get("nsfw_modifier", "None")))
-        self.subject_2_nsfw_modifier_var.set(str(state.get("subject_2_nsfw_modifier", "None")))
-        self.bondage_var.set(str(state.get("bondage", "None")))
-        self.subject_2_bondage_var.set(str(state.get("subject_2_bondage", "None")))
+        bondage_tags = state.get("bondage", "")
+        subject_2_bondage_tags = state.get("subject_2_bondage", "")
+        self.bondage_enabled_var.set(bool(state.get("bondage_enabled", bool(split_tag_text(bondage_tags)))))
+        self.subject_2_bondage_enabled_var.set(bool(state.get("subject_2_bondage_enabled", bool(split_tag_text(subject_2_bondage_tags)))))
         self.image_quality_var.set(str(state.get("image_quality", "None")))
         self.use_break_var.set(bool(state.get("use_break", True)))
 
@@ -1192,12 +1311,24 @@ class PromptGui:
             if saved_value is not None:
                 widget.set(str(saved_value))
 
-        custom_tags = state.get("custom_tags", "")
+        custom_tags = state.get("custom_tags", state.get("field_custom_tags_field", ""))
+        duo_custom_tags = state.get("duo_custom_tags_field", "")
         extra_clothing_tags = state.get("extra_clothing_tags", "")
-        self.custom_tags.delete("1.0", tk.END)
-        self.custom_tags.insert("1.0", str(custom_tags))
-        self.extra_clothing_tags.delete("1.0", tk.END)
-        self.extra_clothing_tags.insert("1.0", str(extra_clothing_tags))
+        custom_widget, _ = self._get_widget_text_fields(self.field_widgets)
+        duo_custom_widget, _ = self._get_widget_text_fields(self.duo_field_widgets)
+        set_text_widget_text(custom_widget, custom_tags)
+        set_text_widget_text(duo_custom_widget, duo_custom_tags)
+        set_text_widget_text(self.extra_clothing_tags, extra_clothing_tags)
+        self._apply_widget_tag_state(
+            self.field_widgets,
+            nsfw_tags=state.get("nsfw_modifier", ""),
+            bondage_tags=bondage_tags,
+        )
+        self._apply_widget_tag_state(
+            self.duo_field_widgets,
+            nsfw_tags=state.get("subject_2_nsfw_modifier", ""),
+            bondage_tags=subject_2_bondage_tags,
+        )
 
         checksum_store = state.get("checksum_store")
         if isinstance(checksum_store, dict):
@@ -1211,43 +1342,56 @@ class PromptGui:
             pass
 
     def reset_to_neutral_defaults(self):
-        neutral_field_values = {
-            "full_outfit": "None",
-            "top_clothing": "None",
-            "bottom_clothing": "None",
-            "headwear": "None",
-            "shoes": "None",
-            "accessories": "None",
-            "hair_style": "Random",
-            "eye_color": "Random",
-            "pose": "Random",
-            "breast_size": "Random",
-            "breast_shape": "Random",
-        }
-        for key, value in neutral_field_values.items():
-            if key in self.field_widgets:
-                self.field_widgets[key].set(value)
+        for widget_map, values_map in (
+            (self.field_widgets, self.field_values),
+            (self.duo_field_widgets, self.duo_field_values),
+        ):
+            for key, (values, default) in values_map.items():
+                widget = widget_map.get(key)
+                if widget is None:
+                    continue
+                widget.set(get_neutral_reset_value(values, default))
 
-        neutral_duo_values = {
-            "pose": "Random",
-            "expression": "Random",
-            "full_outfit": "None",
-            "top_clothing": "None",
-            "bottom_clothing": "None",
-            "headwear": "None",
-            "shoes": "None",
-            "accessories": "None",
-            "hair_style": "Random",
-            "eye_color": "Random",
-            "breast_size": "Random",
-            "breast_shape": "Random",
+        neutral_var_values = {
+            self.mode_var: "subject",
+            self.seed_var: "42",
+            self.person_count_var: "solo",
+            self.duo_second_gender_var: get_neutral_reset_value(self.gender_options, "female"),
+            self.duo_second_pose_var: get_neutral_reset_value(self.duo_field_values.get("pose", ([], "Random"))[0], "Random"),
+            self.duo_second_expression_var: get_neutral_reset_value(self.duo_field_values.get("expression", ([], "Random"))[0], "Random"),
+            self.duo_second_body_type_var: get_neutral_reset_value(self.duo_field_values.get("body_type", ([], "None"))[0], "None"),
+            self.rating_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.RATINGS), self.rating_var.get()),
+            self.score_scheme_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SCORE_SCHEMES), self.score_scheme_var.get()),
+            self.image_quality_var: "None",
+            self.location_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LOCATIONS), self.location_var.get()),
+            self.lighting_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.LIGHTING), self.lighting_var.get()),
+            self.camera_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.CAMERAS), self.camera_var.get()),
+            self.sex_act_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_ACTS), "None"),
+            self.sex_position_var: get_neutral_reset_value(pony_nodes.get_sorted_list(pony_nodes.SEX_POSITIONS), "None"),
         }
-        for key, value in neutral_duo_values.items():
-            if key in self.duo_field_widgets:
-                self.duo_field_widgets[key].set(value)
+        for var, value in neutral_var_values.items():
+            var.set(value)
 
-        self.duo_second_pose_var.set("Random")
-        self.duo_second_expression_var.set("Random")
+        self.nsfw_var.set(False)
+        self.subject_2_nsfw_var.set(False)
+        self.photo_boost_var.set(False)
+        self.nsfw_modifier_var.set("None")
+        self.subject_2_nsfw_modifier_var.set("None")
+        self.bondage_var.set("None")
+        self.subject_2_bondage_var.set("None")
+        self.bondage_enabled_var.set(False)
+        self.subject_2_bondage_enabled_var.set(False)
+        self.use_break_var.set(True)
+        self.prompt_checksum_var.set("")
+        self.prompt_checksum_input_var.set("")
+
+        custom_widget, clothing_widget = self._get_widget_text_fields(self.field_widgets)
+        duo_custom_widget, duo_clothing_widget = self._get_widget_text_fields(self.duo_field_widgets)
+        for text_widget in (custom_widget, clothing_widget, duo_custom_widget, duo_clothing_widget):
+            set_text_widget_text(text_widget, "")
+
+        self._apply_widget_tag_state(self.field_widgets, nsfw_tags="", bondage_tags="")
+        self._apply_widget_tag_state(self.duo_field_widgets, nsfw_tags="", bondage_tags="")
 
     def load_settings(self):
         if not self.settings_path.exists():
@@ -1300,6 +1444,18 @@ class PromptGui:
 
         content_row_start = (len(rows) // 2) + 1
 
+        widget_map["nsfw_master_list"] = list(self.nsfw_master_list)
+        widget_map["bondage_master_list"] = list(self.bondage_master_list)
+        widget_map["custom_tags_master_list"] = list(self.custom_tags_master_list)
+        active_nsfw_tags = widget_map.setdefault("active_nsfw_tags", [])
+        active_bondage_tags = widget_map.setdefault("active_bondage_tags", [])
+        active_custom_tags = widget_map.setdefault("active_custom_tags", [])
+
+        if widget_map is self.field_widgets:
+            self.active_nsfw_tags = active_nsfw_tags
+            self.active_bondage_tags = active_bondage_tags
+            self.active_custom_tags = active_custom_tags
+
         if bondage_enabled_var is None:
             bondage_enabled_var = tk.BooleanVar(value=False)
 
@@ -1308,14 +1464,16 @@ class PromptGui:
             extras.grid(row=content_row_start, column=0, columnspan=4, sticky="ew", pady=(12, 0))
 
             ttk.Label(extras, text="Custom tags").grid(row=0, column=0, sticky="nw", padx=(0, 4), pady=(2, 0))
-            custom_tags_field = tk.Text(extras, height=2, width=42)
+            custom_tags_field = tk.Text(extras, height=3, width=42)
             custom_tags_field.grid(row=0, column=1, sticky="ew", pady=(2, 0))
+            self._configure_auto_grow_text_widget(custom_tags_field, min_lines=3, max_lines=8)
+            self._configure_custom_tag_mirroring(widget_map, custom_tags_field)
             self._bind_widget_preview_refresh(custom_tags_field)
             widget_map["custom_tags_field"] = custom_tags_field
 
-            ttk.Label(extras, text="Extra clothing tags").grid(row=1, column=0, sticky="nw", padx=(0, 4), pady=(2, 0))
+            ttk.Label(extras, text="Extra clothing tags").grid(row=1, column=0, sticky="nw", padx=(0, 4), pady=(8, 0))
             clothing_tags_field = tk.Text(extras, height=2, width=42)
-            clothing_tags_field.grid(row=1, column=1, sticky="ew", pady=(2, 0))
+            clothing_tags_field.grid(row=1, column=1, sticky="ew", pady=(8, 0))
             self._bind_widget_preview_refresh(clothing_tags_field)
             widget_map["clothing_tags_field"] = clothing_tags_field
 
@@ -1334,78 +1492,84 @@ class PromptGui:
         combo = ttk.Combobox(
             nsfw_row,
             textvariable=nsfw_modifier_var,
-            values=sort_combo_values(["None", "Random", *pony_nodes.NSFW_MODIFIERS, "detailed anatomy", "accurate anatomy", "correct anatomy", "realistic anatomy", "stylized anatomy", "anatomically correct", "detailed genitals", "realistic genitals", "soft shading", "detailed shading", "wet", "shiny", "glossy", "aroused", "excited", "muscular definition", "muscular chest", "defined abs", "soft belly", "plush thighs"]),
+            values=self._get_available_tag_values(widget_map, "nsfw"),
             state="readonly",
             width=26,
         )
         combo.set(nsfw_modifier_var.get())
         combo.pack(side=tk.LEFT)
-        combo.bind(
-            "<<ComboboxSelected>>",
-            lambda e: append_nsfw_modifier_tag_standalone(
-                nsfw_modifier_var,
-                widget_map.get("custom_tags_field", getattr(self, "custom_tags", None)),
-            ),
-        )
+        combo.bind("<<ComboboxSelected>>", lambda _event, wm=widget_map: self._handle_tag_selection(wm, "nsfw"))
+        widget_map["nsfw_modifier_var"] = nsfw_modifier_var
+        widget_map["nsfw_tags_combo"] = combo
+
+        nsfw_tags_container = ttk.Frame(parent)
+        nsfw_tags_container.grid(row=button_row + 1, column=0, columnspan=4, sticky="ew", pady=(6, 0))
+        widget_map["nsfw_tags_container"] = nsfw_tags_container
+        if widget_map is self.field_widgets:
+            self.nsfw_tags_container = nsfw_tags_container
 
         bondage_row = ttk.Frame(parent)
-        bondage_row.grid(row=button_row + 1, column=0, columnspan=4, sticky="ew", pady=(6, 0))
+        bondage_row.grid(row=button_row + 2, column=0, columnspan=4, sticky="ew", pady=(6, 0))
         ttk.Checkbutton(bondage_row, text="Bondage / Restraint", variable=bondage_enabled_var).pack(side=tk.LEFT, padx=(0, 10))
         bondage_combo = ttk.Combobox(
             bondage_row,
             textvariable=bondage_var,
-            values=sort_combo_values(["None", "bound", "tied up", "restrained", "handcuffs", "rope", "bondage", "collar", "leash", "gag", "blindfold", "spread legs", "arms behind back", "legs spread"]),
+            values=self._get_available_tag_values(widget_map, "bondage"),
             state="readonly" if bondage_enabled_var.get() else "disabled",
             width=22,
         )
         bondage_combo.set(bondage_var.get())
         bondage_combo.pack(side=tk.LEFT)
+        widget_map["bondage_var"] = bondage_var
+        widget_map["bondage_tags_combo"] = bondage_combo
+
+        bondage_tags_container = ttk.Frame(parent)
+        bondage_tags_container.grid(row=button_row + 3, column=0, columnspan=4, sticky="ew", pady=(6, 0))
+        widget_map["bondage_tags_container"] = bondage_tags_container
+        if widget_map is self.field_widgets:
+            self.bondage_tags_container = bondage_tags_container
 
         def _sync_bondage_state(*_):
-            custom_text_widget = widget_map.get("custom_tags_field", getattr(self, "custom_tags", None))
             if bondage_enabled_var.get():
                 bondage_combo.configure(state="readonly")
             else:
                 bondage_var.set("None")
-                remove_tags_from_text_widget(custom_text_widget, BONDAGE_TAGS)
+                self._get_widget_tag_list(widget_map, "bondage")[:] = []
+                self._sync_tag_controls(widget_map, "bondage")
                 bondage_combo.configure(state="disabled")
 
         bondage_enabled_var.trace_add("write", _sync_bondage_state)
         bondage_combo.bind(
             "<<ComboboxSelected>>",
-            lambda e: (
-                append_bondage_tag_standalone(
-                    bondage_var,
-                    widget_map.get("custom_tags_field", getattr(self, "custom_tags", None)),
-                ) if bondage_enabled_var.get() else None
-            ),
+            lambda _event, wm=widget_map: self._handle_tag_selection(wm, "bondage"),
         )
 
         _sync_bondage_state()
+        self._sync_tag_controls(widget_map, "nsfw")
+        self._sync_tag_controls(widget_map, "bondage")
 
         if include_custom_tags:
             buttons = ttk.Frame(parent)
-            buttons.grid(row=button_row + 2, column=0, columnspan=4, sticky="ew", pady=(10, 6))
+            buttons.grid(row=button_row + 4, column=0, columnspan=4, sticky="ew", pady=(10, 6))
             ttk.Button(buttons, text="Generate", command=self.generate).pack(side=tk.LEFT, padx=(0, 10), fill=tk.X, expand=True)
             ttk.Button(buttons, text="Copy prompt", command=self.copy_prompt).pack(side=tk.LEFT, padx=(0, 10), fill=tk.X, expand=True)
             ttk.Button(buttons, text="Reset defaults", command=lambda: self.reset_person_defaults(person_index)).pack(side=tk.LEFT, fill=tk.X, expand=True)
-            preview_row = button_row + 3
+            preview_row = button_row + 5
         else:
-            preview_row = button_row + 2
+            preview_row = button_row + 4
             buttons = ttk.Frame(parent)
-            buttons.grid(row=button_row + 2, column=0, columnspan=4, sticky="ew", pady=(10, 6))
+            buttons.grid(row=button_row + 4, column=0, columnspan=4, sticky="ew", pady=(10, 6))
             ttk.Button(buttons, text="Reset defaults", command=lambda: self.reset_person_defaults(person_index)).pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-        preview_frame = ttk.Frame(parent)
-        preview_frame.grid(row=preview_row, column=0, columnspan=4, sticky="ew", pady=(6, 6))
-        ttk.Label(preview_frame, text="Prompt preview").pack(anchor="w", pady=(0, 4))
-        preview = tk.Text(preview_frame, height=4, wrap=tk.WORD, state="disabled", cursor="arrow", takefocus=0, font=("TkDefaultFont", 9))
-        preview.pack(fill=tk.BOTH, expand=True)
-        for event in ("<Button-1>", "<ButtonRelease-1>", "<B1-Motion>", "<Double-Button-1>"):
-            preview.bind(event, lambda event=None, _event=event: "break")
-        widget_map["prompt_preview"] = preview
-        if widget_map is self.field_widgets:
-            self.prompt_preview = preview
+        if widget_map is not self.field_widgets:
+            preview_frame = ttk.Frame(parent)
+            preview_frame.grid(row=preview_row, column=0, columnspan=4, sticky="ew", pady=(6, 6))
+            ttk.Label(preview_frame, text="Prompt preview").pack(anchor="w", pady=(0, 4))
+            preview = tk.Text(preview_frame, height=4, wrap=tk.WORD, state="disabled", cursor="arrow", takefocus=0, font=("TkDefaultFont", 9))
+            preview.pack(fill=tk.BOTH, expand=True)
+            for event in ("<Button-1>", "<ButtonRelease-1>", "<B1-Motion>", "<Double-Button-1>"):
+                preview.bind(event, lambda event=None, _event=event: "break")
+            widget_map["prompt_preview"] = preview
 
         for i in range(4):
             parent.columnconfigure(i, weight=1)
@@ -1552,19 +1716,21 @@ class PromptGui:
         if person_index == 1:
             widget_map = self.field_widgets
             values_map = self.field_values
-            if hasattr(self, "custom_tags"):
-                self.custom_tags.delete("1.0", tk.END)
+            custom_widget = widget_map.get("custom_tags_field")
+            if custom_widget is not None:
+                custom_widget.delete("1.0", tk.END)
             if hasattr(self, "extra_clothing_tags"):
                 self.extra_clothing_tags.delete("1.0", tk.END)
             self.nsfw_var.set(False)
-            self.nsfw_modifier_var.set("None")
             self.bondage_enabled_var.set(False)
             self.bondage_var.set("None")
         elif person_index == 2:
             widget_map = self.duo_field_widgets
             values_map = self.duo_field_values
+            custom_widget = widget_map.get("custom_tags_field")
+            if custom_widget is not None:
+                custom_widget.delete("1.0", tk.END)
             self.subject_2_nsfw_var.set(False)
-            self.subject_2_nsfw_modifier_var.set("None")
             self.subject_2_bondage_enabled_var.set(False)
             self.subject_2_bondage_var.set("None")
         else:
@@ -1573,26 +1739,17 @@ class PromptGui:
             var_map = self.person_tab_var_map.get(person_index, {})
             if var_map:
                 var_map.get("nsfw", tk.BooleanVar(value=False)).set(False)
-                var_map.get("nsfw_modifier", tk.StringVar(value="None")).set("None")
                 var_map.get("bondage_enabled", tk.BooleanVar(value=False)).set(False)
                 var_map.get("bondage", tk.StringVar(value="None")).set("None")
 
         if not widget_map:
             return
 
-        defaults = self._get_people_setup_defaults()
         for key, (values, default) in values_map.items():
             if key in widget_map:
-                widget_map[key].set(default)
+                widget_map[key].set(get_neutral_reset_value(values, default))
 
-        self._apply_defaults_to_widget_map(widget_map, defaults)
-
-        custom_widget = widget_map.get("custom_tags_field")
-        if custom_widget is not None:
-            try:
-                custom_widget.delete("1.0", tk.END)
-            except Exception:
-                pass
+        self._apply_widget_tag_state(widget_map, nsfw_tags="", bondage_tags="")
 
         clothing_widget = widget_map.get("clothing_tags_field")
         if clothing_widget is not None:
@@ -1605,11 +1762,24 @@ class PromptGui:
 
     def reset_all_person_defaults(self):
         self.reset_to_neutral_defaults()
-        defaults = self._get_people_setup_defaults()
         active_count = self._get_person_setup_count()
         for person_index in range(1, active_count + 1):
             self.reset_person_defaults(person_index)
-        self.apply_people_setup_defaults()
+
+        for person_index in range(3, 5):
+            widget_map = self.person_tab_widgets.get(person_index, {})
+            for key, (values, default) in self.field_values.items():
+                if key in widget_map:
+                    widget_map[key].set(get_neutral_reset_value(values, default))
+            custom_widget, clothing_widget = self._get_widget_text_fields(widget_map)
+            set_text_widget_text(custom_widget, "")
+            set_text_widget_text(clothing_widget, "")
+            self._apply_widget_tag_state(widget_map, nsfw_tags="", bondage_tags="")
+
+        if self.preset_combo is not None:
+            self.preset_combo.set("None")
+        self._set_readonly_info_text(self.preset_info_text, "")
+        self.canvas_denoise_var.set(0.65)
         self._queue_prompt_preview_refresh()
 
     def apply_people_setup_defaults(self):
@@ -1661,6 +1831,253 @@ class PromptGui:
         self.update_mode_visibility()
         self._update_invoke_canvas_button_state()
 
+    def _get_tag_control_config(self, tag_kind):
+        if tag_kind == "nsfw":
+            return {
+                "active_key": "active_nsfw_tags",
+                "master_key": "nsfw_master_list",
+                "master_attr": "nsfw_master_list",
+                "combo_key": "nsfw_tags_combo",
+                "container_key": "nsfw_tags_container",
+                "var_key": "nsfw_modifier_var",
+            }
+        if tag_kind == "bondage":
+            return {
+                "active_key": "active_bondage_tags",
+                "master_key": "bondage_master_list",
+                "master_attr": "bondage_master_list",
+                "combo_key": "bondage_tags_combo",
+                "container_key": "bondage_tags_container",
+                "var_key": "bondage_var",
+            }
+        return {
+            "active_key": "active_custom_tags",
+            "master_key": "custom_tags_master_list",
+            "master_attr": "custom_tags_master_list",
+            "combo_key": "custom_tags_combo",
+            "container_key": "custom_tags_container",
+            "var_key": "custom_tags_var",
+        }
+
+    def _get_widget_tag_list(self, widget_map, tag_kind):
+        if widget_map is None:
+            widget_map = self.field_widgets
+        config = self._get_tag_control_config(tag_kind)
+        return widget_map.setdefault(config["active_key"], [])
+
+    def _get_active_tags_text(self, widget_map, tag_kind):
+        return compose_tag_text(self._get_widget_tag_list(widget_map, tag_kind))
+
+    def _get_available_tag_values(self, widget_map, tag_kind):
+        if widget_map is None:
+            widget_map = self.field_widgets
+
+        config = self._get_tag_control_config(tag_kind)
+        master_list = widget_map.get(config["master_key"], getattr(self, config["master_attr"], []))
+        active_lower = {tag.lower() for tag in self._get_widget_tag_list(widget_map, tag_kind)}
+        available_values = []
+        for value in master_list:
+            if value in {"None", "Random"} or value.lower() not in active_lower:
+                available_values.append(value)
+        return available_values
+
+    def update_tags_ui(self, widget_map, tag_kind):
+        config = self._get_tag_control_config(tag_kind)
+        container = widget_map.get(config["container_key"])
+        if container is None:
+            return
+
+        for child in container.winfo_children():
+            child.destroy()
+
+        max_columns = 10
+        pill_bg = "#f5f5f5"
+        pill_border = "#d9d9d9"
+
+        for column in range(max_columns):
+            container.grid_columnconfigure(column, weight=0)
+
+        active_tags = self._get_widget_tag_list(widget_map, tag_kind)
+        for index, tag in enumerate(active_tags):
+            row = index // max_columns
+            column = index % max_columns
+
+            pill = tk.Frame(
+                container,
+                bg=pill_bg,
+                highlightbackground=pill_border,
+                highlightthickness=1,
+                bd=0,
+            )
+            pill.grid(row=row, column=column, padx=2, pady=2, sticky="w")
+
+            tk.Label(
+                pill,
+                text=tag,
+                bg=pill_bg,
+                relief="flat",
+                padx=0,
+                pady=0,
+            ).pack(side=tk.LEFT, padx=(5, 2), pady=3)
+            tk.Button(
+                pill,
+                text="X",
+                width=2,
+                bg=pill_bg,
+                activebackground=pill_bg,
+                relief="flat",
+                bd=0,
+                padx=0,
+                pady=0,
+                command=lambda selected_tag=tag, wm=widget_map, kind=tag_kind: self._remove_active_tag(wm, kind, selected_tag),
+            ).pack(side=tk.LEFT, padx=(0, 5), pady=2)
+
+    def _render_tag_pills(self, widget_map, tag_kind):
+        self.update_tags_ui(widget_map, tag_kind)
+
+    def _sync_tag_controls(self, widget_map, tag_kind):
+        config = self._get_tag_control_config(tag_kind)
+        combo = widget_map.get(config["combo_key"])
+        combo_var = widget_map.get(config["var_key"])
+        if combo is not None:
+            combo.configure(values=self._get_available_tag_values(widget_map, tag_kind))
+        if combo_var is not None:
+            combo_var.set("None")
+        self._render_tag_pills(widget_map, tag_kind)
+
+    def _handle_tag_selection(self, widget_map, tag_kind):
+        config = self._get_tag_control_config(tag_kind)
+        combo_var = widget_map.get(config["var_key"])
+        if combo_var is None:
+            return
+
+        selected_tag = sanitize_gui_text(combo_var.get()).strip()
+        if selected_tag in {"", "None", "Random"}:
+            combo_var.set("None")
+            return
+
+        active_tags = self._get_widget_tag_list(widget_map, tag_kind)
+        if selected_tag.lower() not in {tag.lower() for tag in active_tags}:
+            active_tags.append(selected_tag)
+
+        self._sync_tag_controls(widget_map, tag_kind)
+        self._queue_prompt_preview_refresh()
+
+    def _remove_active_tag(self, widget_map, tag_kind, tag_to_remove):
+        active_tags = self._get_widget_tag_list(widget_map, tag_kind)
+        active_tags[:] = [tag for tag in active_tags if tag.lower() != tag_to_remove.lower()]
+        if tag_kind in {"nsfw", "bondage"}:
+            auto_key = f"auto_{tag_kind}_tags"
+            auto_tags = widget_map.get(auto_key, [])
+            if tag_to_remove.lower() in {tag.lower() for tag in auto_tags}:
+                custom_widget = widget_map.get("custom_tags_field")
+                remove_tags_from_text_widget(custom_widget, [tag_to_remove])
+                self._sync_special_tag_controls_from_custom_text(widget_map)
+        self._sync_tag_controls(widget_map, tag_kind)
+        self._queue_prompt_preview_refresh()
+
+    def _apply_widget_tag_state(self, widget_map, nsfw_tags="", bondage_tags=""):
+        self._get_widget_tag_list(widget_map, "nsfw")[:] = split_tag_text(nsfw_tags)
+        self._get_widget_tag_list(widget_map, "bondage")[:] = split_tag_text(bondage_tags)
+        self._sync_tag_controls(widget_map, "nsfw")
+        self._sync_tag_controls(widget_map, "bondage")
+
+    def _adjust_auto_grow_text_widget_height(self, widget, min_lines=3, max_lines=8):
+        if widget is None or not widget.winfo_exists():
+            return
+
+        try:
+            chars_per_line = max(20, int(widget.cget("width")))
+        except Exception:
+            chars_per_line = 42
+
+        text = widget.get("1.0", "end-1c")
+        logical_lines = text.splitlines() or [""]
+        display_lines = 0
+        for logical_line in logical_lines:
+            expanded_line = logical_line.expandtabs(4)
+            display_lines += max(1, (len(expanded_line) + chars_per_line - 1) // chars_per_line)
+
+        target_height = max(min_lines, min(max_lines, display_lines))
+        if int(widget.cget("height")) != target_height:
+            widget.configure(height=target_height)
+
+    def _configure_auto_grow_text_widget(self, widget, min_lines=3, max_lines=8):
+        if widget is None:
+            return
+
+        widget.configure(wrap=tk.WORD)
+
+        def _auto_grow_callback(_event=None, text_widget=widget, min_height=min_lines, max_height=max_lines):
+            self._adjust_auto_grow_text_widget_height(text_widget, min_height, max_height)
+
+        widget._auto_grow_callback = _auto_grow_callback
+        widget.bind("<KeyRelease>", _auto_grow_callback, add="+")
+        widget.bind("<Configure>", _auto_grow_callback, add="+")
+        widget.bind("<FocusOut>", _auto_grow_callback, add="+")
+        widget.after_idle(_auto_grow_callback)
+
+    def _extract_matching_master_tags(self, tags, master_list):
+        normalized_master = {}
+        for value in master_list or []:
+            if value in {"None", "Random"}:
+                continue
+            normalized_master[str(value).strip().lower()] = str(value).strip()
+
+        matches = []
+        seen = set()
+        for tag in tags:
+            normalized = normalized_master.get(tag.lower())
+            if not normalized:
+                continue
+            lowered = normalized.lower()
+            if lowered in seen:
+                continue
+            seen.add(lowered)
+            matches.append(normalized)
+        return matches
+
+    def _sync_special_tag_controls_from_custom_text(self, widget_map):
+        custom_widget = widget_map.get("custom_tags_field")
+        if custom_widget is None:
+            return
+
+        custom_tags = split_tag_text(self._read_widget_value(custom_widget))
+        for tag_kind in ("nsfw", "bondage"):
+            config = self._get_tag_control_config(tag_kind)
+            master_list = widget_map.get(config["master_key"], getattr(self, config["master_attr"], []))
+            auto_key = f"auto_{tag_kind}_tags"
+            previous_auto_tags = widget_map.get(auto_key, [])
+            previous_auto_lower = {tag.lower() for tag in previous_auto_tags}
+            active_tags = self._get_widget_tag_list(widget_map, tag_kind)
+            manual_tags = [tag for tag in active_tags if tag.lower() not in previous_auto_lower]
+            auto_tags = self._extract_matching_master_tags(custom_tags, master_list)
+            widget_map[auto_key] = auto_tags
+
+            merged_tags = list(manual_tags)
+            merged_lower = {tag.lower() for tag in merged_tags}
+            for tag in auto_tags:
+                if tag.lower() in merged_lower:
+                    continue
+                merged_tags.append(tag)
+                merged_lower.add(tag.lower())
+
+            active_tags[:] = merged_tags
+            self._sync_tag_controls(widget_map, tag_kind)
+
+    def _configure_custom_tag_mirroring(self, widget_map, widget):
+        if widget is None:
+            return
+
+        def _tag_sync_callback(_event=None, wm=widget_map):
+            self._sync_special_tag_controls_from_custom_text(wm)
+
+        widget._tag_sync_callback = _tag_sync_callback
+        widget.bind("<KeyRelease>", _tag_sync_callback, add="+")
+        widget.bind("<ButtonRelease>", _tag_sync_callback, add="+")
+        widget.bind("<FocusOut>", _tag_sync_callback, add="+")
+        widget.after_idle(_tag_sync_callback)
+
     def _get_widget_text_fields(self, widget_map=None):
         if widget_map is None:
             widget_map = self.field_widgets
@@ -1668,8 +2085,6 @@ class PromptGui:
         custom_widget = widget_map.get("custom_tags_field")
         clothing_widget = widget_map.get("clothing_tags_field")
 
-        if custom_widget is None:
-            custom_widget = getattr(self, "custom_tags", None)
         if clothing_widget is None:
             clothing_widget = getattr(self, "extra_clothing_tags", None)
 
@@ -1734,8 +2149,8 @@ class PromptGui:
             return
 
         if isinstance(widget, tk.Text):
-            widget.bind("<KeyRelease>", self._queue_prompt_preview_refresh)
-            widget.bind("<ButtonRelease>", self._queue_prompt_preview_refresh)
+            widget.bind("<KeyRelease>", self._queue_prompt_preview_refresh, add="+")
+            widget.bind("<ButtonRelease>", self._queue_prompt_preview_refresh, add="+")
             return
 
         if isinstance(widget, ttk.Combobox):
@@ -1779,8 +2194,8 @@ class PromptGui:
                 custom_widget, clothing_widget = self._get_widget_text_fields(widget_map)
                 values["custom_tags"] = self._read_widget_value(custom_widget)
                 values["extra_clothing_tags"] = self._read_widget_value(clothing_widget)
-                values["nsfw_modifier"] = self.person_tab_var_map.get(person_index, {}).get("nsfw_modifier", tk.StringVar(value="None")).get()
-                values["bondage_restraint"] = self.person_tab_var_map.get(person_index, {}).get("bondage", tk.StringVar(value="None")).get()
+                values["nsfw_modifier"] = self._get_active_tags_text(widget_map, "nsfw")
+                values["bondage_restraint"] = self._get_active_tags_text(widget_map, "bondage")
 
             raw_gender = values.get("gender", "")
             if self._is_feral_gender(raw_gender):
@@ -1925,8 +2340,12 @@ class PromptGui:
     def _get_canvas_selected_character_tags(self):
         tags = []
         seen = set()
+        blocked_keys = {"location", "lighting"}
 
         for key, _label in self.canvas_include_options:
+            if key in blocked_keys:
+                continue
+
             include_var = self.canvas_include_vars.get(key)
             if include_var is None or not include_var.get():
                 continue
@@ -1981,75 +2400,177 @@ class PromptGui:
         return tags
 
     def _sanitize_canvas_positive_prompt(self, prompt_text, selected_character_tags=None, custom_character_tags=None, seed=0, feral_mode=False):
-        cleaned = re.sub(r"\bsolo\b", "", prompt_text or "", flags=re.IGNORECASE)
-        parts = []
-        for part in cleaned.split(","):
-            stripped = re.sub(r"\s{2,}", " ", part).strip()
-            if stripped:
-                parts.append(stripped)
+        prefix_parts = []
+        for value in (self.rating_var.get(), self.image_quality_var.get()):
+            text = sanitize_gui_text(value).strip()
+            if text and not pony_nodes._is_ignored_value(text):
+                prefix_parts.append(text)
 
-        allowed_tags = [str(tag).strip() for tag in (selected_character_tags or []) if str(tag).strip()]
-        custom_tags = [str(tag).strip() for tag in (custom_character_tags or []) if str(tag).strip()]
+        if self.photo_boost_var.get():
+            prefix_parts.append("source_photography, raw photo, hyperrealistic, 8k uhd, film grain")
+
+        allowed_tags = [sanitize_gui_text(tag).strip() for tag in (selected_character_tags or []) if sanitize_gui_text(tag).strip()]
+        custom_tags = [sanitize_gui_text(tag).strip() for tag in (custom_character_tags or []) if sanitize_gui_text(tag).strip()]
         if custom_tags:
             allowed_tags.extend(custom_tags)
+
+        blocked_scene_tags = {self.location_var.get(), self.lighting_var.get(), self.camera_var.get()}
+        allowed_tags = filter_blocked_canvas_character_tags(allowed_tags, blocked_scene_tags)
 
         if feral_mode:
             allowed_tags.extend(FERAL_POSITIVE_TAGS)
 
-        if allowed_tags:
-            allowed_lower = {tag.lower() for tag in allowed_tags}
-            parts = [p for p in parts if p.lower() not in allowed_lower]
+        if not allowed_tags:
+            return ", ".join(prefix_parts)
 
-            insert_index = len(parts)
-            rating_tag = (self.rating_var.get() or "").strip()
-            if rating_tag and rating_tag not in {"None", "Random"}:
-                for idx, token in enumerate(parts):
-                    if token.lower() == rating_tag.lower():
-                        insert_index = idx + 1
-                        break
-            else:
-                for idx, token in enumerate(parts):
-                    if token.lower() == "highly detailed":
-                        insert_index = idx + 1
-                        break
+        weight_value = sanitize_gui_text(self.canvas_weight_var.get() or "1.15").strip()
+        if not weight_value:
+            weight_value = "1.15"
 
-            location_value = self.location_var.get().strip()
-            lighting_value = self.lighting_var.get().strip()
-            camera_value = self.camera_var.get().strip()
-            scene_location = pony_nodes.get_smart_random(pony_nodes.LOCATIONS, seed) if location_value == "Random" else location_value
-            scene_lighting = pony_nodes.get_smart_random(pony_nodes.LIGHTING, seed + 1) if lighting_value == "Random" else lighting_value
-            scene_camera = pony_nodes.get_smart_random(pony_nodes.CAMERAS, seed + 2) if camera_value == "Random" else camera_value
-            scene_tags = {str(tag).strip().lower() for tag in (scene_location, scene_lighting, scene_camera) if str(tag).strip()}
-
-            first_scene_index = None
-            for idx, token in enumerate(parts):
-                if token.lower() in scene_tags:
-                    first_scene_index = idx
-                    break
-
-            if first_scene_index is not None and insert_index > first_scene_index:
-                insert_index = first_scene_index
-
-            weight_value = (self.canvas_weight_var.get() or "1.15").strip()
-            if not weight_value:
-                weight_value = "1.15"
-            weighted_block = f"({', '.join(allowed_tags)}:{weight_value})"
-            parts.insert(insert_index, weighted_block)
-
+        weighted_block = f"({', '.join(allowed_tags)}:{weight_value})"
+        parts = [part for part in prefix_parts if part]
+        parts.append(weighted_block)
         return ", ".join(parts)
 
     def update_canvas_prompts(self):
-        canvas_texts = self._build_canvas_inpaint_text()
-        if canvas_texts is None:
-            return
-        positive_text, negative_text = canvas_texts
+        feral_mode_enabled = self._is_feral_gender(self._read_widget_value(self.field_widgets.get("gender")))
+
+        blocked_scene_values = {
+            sanitize_gui_text(self.location_var.get()).strip().lower(),
+            sanitize_gui_text(self.lighting_var.get()).strip().lower(),
+            sanitize_gui_text(self.camera_var.get()).strip().lower(),
+        }
+        blocked_scene_values = {value for value in blocked_scene_values if value}
+
+        bracket_tags = []
+        seen = set()
+
+        for key, _label in self.canvas_include_options:
+            include_var = self.canvas_include_vars.get(key)
+            if include_var is None or not include_var.get():
+                continue
+
+            widget = self.field_widgets.get(key) if isinstance(self.field_widgets, dict) else None
+            value = sanitize_gui_text(self._read_widget_value(widget)).strip()
+            if pony_nodes._is_ignored_value(value):
+                continue
+
+            if key == "gender":
+                value = sanitize_gui_text(self._get_base_gender_from_value(value)).strip()
+
+            lowered = value.lower()
+            if not value or lowered in seen or lowered in blocked_scene_values:
+                continue
+
+            seen.add(lowered)
+            bracket_tags.append(value)
+
+        custom_widget, _clothing_widget = self._get_widget_text_fields(self.field_widgets)
+        raw_custom_tags = sanitize_gui_text(self._read_widget_value(custom_widget)).replace("(", "").replace(")", "")
+        blocked_custom_tags = {
+            "score_9",
+            "score_8_up",
+            "score_7_up",
+            "rating_explicit",
+            "source_photography",
+            "raw photo",
+            "hyperrealistic",
+            "masterpiece",
+            "location",
+            "lighting",
+            "camera",
+            "background",
+            "snowy mountain background",
+            "bright rim lighting",
+            "dark cinematic lighting",
+            "night background",
+            "sci-fi lighting",
+            "dark misty forest background",
+            "volcanic background",
+            "dramatic lighting",
+            "volumetric lighting",
+            "dynamic high-contrast studio lighting",
+            "dynamic dramatic lighting",
+            "underwater lighting",
+            "jungle temple ruins background",
+            *blocked_scene_values,
+        }
+
+        if raw_custom_tags:
+            for part in raw_custom_tags.split(","):
+                part = part.strip()
+                text = sanitize_gui_text(re.sub(r"\s{2,}", " ", part)).strip()
+                if not text:
+                    continue
+
+                lowered = text.lower()
+                if lowered in seen or lowered in blocked_custom_tags:
+                    continue
+
+                seen.add(lowered)
+                bracket_tags.append(text)
+
+        if feral_mode_enabled:
+            for tag in FERAL_POSITIVE_TAGS:
+                text = sanitize_gui_text(tag).strip()
+                if not text:
+                    continue
+                lowered = text.lower()
+                if lowered in seen:
+                    continue
+                seen.add(lowered)
+                bracket_tags.append(text)
+
+        weight_value = sanitize_gui_text(self.canvas_weight_var.get() or "1.15").strip()
+        final_positive_prompt = compose_canvas_positive_prompt(bracket_tags, weight_value)
+
+        # Safety scrub: remove blocked lighting/background phrases from the final canvas prompt as well.
+        blocked_canvas_phrases = {phrase.lower() for phrase in blocked_custom_tags}
+        cleaned_final_parts = []
+        for part in final_positive_prompt.split(","):
+            cleaned_part = sanitize_gui_text(re.sub(r"\s{2,}", " ", part)).strip()
+            if not cleaned_part:
+                continue
+            if cleaned_part.lower() in blocked_canvas_phrases:
+                continue
+            cleaned_final_parts.append(cleaned_part)
+        final_positive_prompt = ", ".join(cleaned_final_parts)
 
         if self.canvas_positive_text is not None:
-            self.canvas_positive_text.delete("1.0", tk.END)
-            self.canvas_positive_text.insert(tk.END, positive_text)
+            set_text_widget_text(self.canvas_positive_text, final_positive_prompt)
+
+        try:
+            seed = int(self.seed_var.get())
+        except ValueError:
+            seed = 0
+
+        node = CR_Pony_Master()
+        _, negative_prompt = node.generate_master(
+            seed=seed,
+            rating=self.rating_var.get(),
+            location=self.location_var.get(),
+            lighting=self.lighting_var.get(),
+            camera=self.camera_var.get(),
+            use_break=self.use_break_var.get(),
+            nsfw_mode=self.nsfw_var.get(),
+            sex_act=self.sex_act_var.get(),
+            sex_position=self.sex_position_var.get(),
+            score_scheme=self.score_scheme_var.get(),
+            source_bias="None",
+            strong_anime_bias=False,
+            style_preset="None",
+            subject_1=None,
+            subject_2=None,
+            subject_3=None,
+            subject_4=None,
+            photo_boost=False,
+        )
+
+        extra_negatives = [FERAL_NEGATIVE_TAGS] if feral_mode_enabled else []
+        negative = compose_negative_prompt(negative_prompt or "-", *extra_negatives)
+
         if self.canvas_negative_text is not None:
-            self.canvas_negative_text.delete("1.0", tk.END)
-            self.canvas_negative_text.insert(tk.END, negative_text)
+            set_text_widget_text(self.canvas_negative_text, negative)
 
     def refresh_canvas_prompt_fields(self):
         self.update_canvas_prompts()
@@ -2061,8 +2582,7 @@ class PromptGui:
         if text_widget is None:
             return
         text_widget.configure(state="normal")
-        text_widget.delete("1.0", tk.END)
-        text_widget.insert("1.0", str(value or ""))
+        set_text_widget_text(text_widget, value)
         text_widget.configure(state="disabled")
 
     def _get_preset_value(self, preset, keys, default_value):
@@ -2085,12 +2605,12 @@ class PromptGui:
         if not isinstance(preset, dict):
             return
 
-        body_type_value = str(self._get_preset_value(preset, ["body_type", "Body Type", "bodyType"], "None"))
-        special_skin_value = str(self._get_preset_value(preset, ["special_skin_type", "special_skin", "Special Skin Type", "specialSkinType"], "None"))
-        positive_prompt_value = str(self._get_preset_value(preset, ["positive", "positive_prompt", "Positive Prompt", "positivePrompt"], ""))
-        custom_tags_value = str(self._get_preset_value(preset, ["custom_tags", "Custom Tags", "customTags"], positive_prompt_value))
-        negative_prompt_value = str(self._get_preset_value(preset, ["negative", "negative_prompt", "Negative Prompt", "negativePrompt"], "-"))
-        info_value = str(self._get_preset_value(preset, ["info", "Info"], ""))
+        body_type_value = sanitize_gui_text(self._get_preset_value(preset, ["body_type", "Body Type", "bodyType"], "None"))
+        special_skin_value = sanitize_gui_text(self._get_preset_value(preset, ["special_skin_type", "special_skin", "Special Skin Type", "specialSkinType"], "None"))
+        positive_prompt_value = sanitize_gui_text(self._get_preset_value(preset, ["positive", "positive_prompt", "Positive Prompt", "positivePrompt"], ""))
+        custom_tags_value = sanitize_gui_text(self._get_preset_value(preset, ["custom_tags", "Custom Tags", "customTags"], positive_prompt_value))
+        negative_prompt_value = sanitize_gui_text(self._get_preset_value(preset, ["negative", "negative_prompt", "Negative Prompt", "negativePrompt"], "-"))
+        info_value = sanitize_gui_text(self._get_preset_value(preset, ["info", "Info"], ""))
 
         denoise_raw = self._get_preset_value(
             preset,
@@ -2111,24 +2631,14 @@ class PromptGui:
         self.update_denoising_recommendation(denoise_value)
 
         custom_tags_widget, _ = self._get_widget_text_fields(self.field_widgets)
-        if custom_tags_widget is not None:
-            if isinstance(custom_tags_widget, tk.Text):
-                custom_tags_widget.delete("1.0", tk.END)
-                custom_tags_widget.insert("1.0", custom_tags_value)
-            else:
-                custom_tags_widget.delete(0, tk.END)
-                custom_tags_widget.insert(0, custom_tags_value)
-
-        if self.canvas_positive_text is not None:
-            self.canvas_positive_text.delete("1.0", tk.END)
-            self.canvas_positive_text.insert("1.0", positive_prompt_value)
+        set_text_widget_text(custom_tags_widget, custom_tags_value)
 
         if self.canvas_negative_text is not None:
-            self.canvas_negative_text.delete("1.0", tk.END)
-            self.canvas_negative_text.insert("1.0", negative_prompt_value if negative_prompt_value else "-")
+            set_text_widget_text(self.canvas_negative_text, negative_prompt_value if negative_prompt_value else "-")
 
         self._set_readonly_info_text(self.preset_info_text, info_value)
         self.update_preview_text()
+        self.update_canvas_prompts()
 
     def update_denoising_recommendation(self, val):
         try:
@@ -2190,8 +2700,8 @@ class PromptGui:
         custom_widget, clothing_widget = self._get_widget_text_fields(self.field_widgets)
         values["custom_tags"] = self._read_widget_value(custom_widget)
         values["extra_clothing_tags"] = self._read_widget_value(clothing_widget)
-        values["nsfw_modifier"] = self.nsfw_modifier_var.get()
-        values["bondage_restraint"] = self.bondage_var.get()
+        values["nsfw_modifier"] = self._get_active_tags_text(self.field_widgets, "nsfw")
+        values["bondage_restraint"] = self._get_active_tags_text(self.field_widgets, "bondage")
         return values
 
     def get_duo_second_values(self):
@@ -2205,8 +2715,8 @@ class PromptGui:
         custom_widget, clothing_widget = self._get_widget_text_fields(self.duo_field_widgets)
         values["custom_tags"] = self._read_widget_value(custom_widget)
         values["extra_clothing_tags"] = self._read_widget_value(clothing_widget)
-        values["nsfw_modifier"] = self.subject_2_nsfw_modifier_var.get()
-        values["bondage_restraint"] = self.subject_2_bondage_var.get()
+        values["nsfw_modifier"] = self._get_active_tags_text(self.duo_field_widgets, "nsfw")
+        values["bondage_restraint"] = self._get_active_tags_text(self.duo_field_widgets, "bondage")
         return values
 
     def apply_selected_category_tags(self):
@@ -2405,14 +2915,11 @@ class PromptGui:
             self.output_window.lift()
 
         if positive_text is not None:
-            self.output_positive.delete("1.0", tk.END)
-            self.output_positive.insert(tk.END, positive_text)
+            set_text_widget_text(self.output_positive, positive_text)
         if negative_text is not None:
-            self.output_negative.delete("1.0", tk.END)
-            self.output_negative.insert(tk.END, negative_text)
+            set_text_widget_text(self.output_negative, negative_text)
         else:
-            self.output_negative.delete("1.0", tk.END)
-            self.output_negative.insert(tk.END, "-")
+            set_text_widget_text(self.output_negative, "-")
 
     def close_prompt_window(self):
         if self.output_window is None or not self.output_window.winfo_exists():
@@ -2421,11 +2928,9 @@ class PromptGui:
         positive_text = self.output_positive.get("1.0", tk.END).strip() if self.output_positive is not None else ""
         negative_text = self.output_negative.get("1.0", tk.END).strip() if self.output_negative is not None else "-"
         if positive_text:
-            self.output_positive.delete("1.0", tk.END)
-            self.output_positive.insert(tk.END, positive_text)
+            set_text_widget_text(self.output_positive, positive_text)
         if negative_text:
-            self.output_negative.delete("1.0", tk.END)
-            self.output_negative.insert(tk.END, negative_text)
+            set_text_widget_text(self.output_negative, negative_text)
         self.output_window.withdraw()
 
     def generate(self):
@@ -2469,7 +2974,8 @@ class PromptGui:
             if person_index == 1:
                 for key, widget in self.field_widgets.items():
                     tab_data[key] = self._read_widget_value(widget)
-                tab_data["nsfw_modifier"] = self.nsfw_modifier_var.get()
+                tab_data["nsfw_modifier"] = self._get_active_tags_text(self.field_widgets, "nsfw")
+                tab_data["bondage"] = self._get_active_tags_text(self.field_widgets, "bondage")
                 custom_widget, clothing_widget = self._get_widget_text_fields(self.field_widgets)
                 tab_data["custom_tags_field"] = self._read_widget_value(custom_widget)
                 tab_data["clothing_tags_field"] = self._read_widget_value(clothing_widget)
@@ -2477,14 +2983,11 @@ class PromptGui:
             elif person_index == 2:
                 for key, widget in self.duo_field_widgets.items():
                     tab_data[key] = self._read_widget_value(widget)
-                tab_data["nsfw_modifier"] = self.subject_2_nsfw_modifier_var.get()
+                tab_data["nsfw_modifier"] = self._get_active_tags_text(self.duo_field_widgets, "nsfw")
+                tab_data["bondage"] = self._get_active_tags_text(self.duo_field_widgets, "bondage")
                 custom_widget, clothing_widget = self._get_widget_text_fields(self.duo_field_widgets)
                 tab_data["custom_tags_field"] = self._read_widget_value(custom_widget)
                 tab_data["clothing_tags_field"] = self._read_widget_value(clothing_widget)
-                if hasattr(self, 'subject_2_bondage_var'):
-                    tab_data["bondage"] = self.subject_2_bondage_var.get()
-                elif hasattr(self, 'duo_second_bondage_var'):
-                    tab_data["bondage"] = self.duo_second_bondage_var.get()
 
             else:
                 widget_map = self.person_tab_widgets.get(person_index, {})
@@ -2494,9 +2997,9 @@ class PromptGui:
 
                 var_map = self.person_tab_var_map.get(person_index, {})
                 if "nsfw_modifier" in var_map:
-                    tab_data["nsfw_modifier"] = var_map["nsfw_modifier"].get()
+                    tab_data["nsfw_modifier"] = self._get_active_tags_text(widget_map, "nsfw")
                 if "bondage" in var_map:
-                    tab_data["bondage"] = var_map["bondage"].get()
+                    tab_data["bondage"] = self._get_active_tags_text(widget_map, "bondage")
                 custom_widget, clothing_widget = self._get_widget_text_fields(widget_map)
                 tab_data["custom_tags_field"] = self._read_widget_value(custom_widget)
                 tab_data["clothing_tags_field"] = self._read_widget_value(clothing_widget)
@@ -2576,10 +3079,8 @@ class PromptGui:
             self.open_output_window(positive, negative)
             return
 
-        self.output_positive.delete("1.0", tk.END)
-        self.output_positive.insert(tk.END, positive)
-        self.output_negative.delete("1.0", tk.END)
-        self.output_negative.insert(tk.END, negative)
+        set_text_widget_text(self.output_positive, positive)
+        set_text_widget_text(self.output_negative, negative)
         self.output_window.deiconify()
         self.output_window.lift()
 

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import main
 
@@ -81,6 +82,103 @@ def test_should_auto_enable_canvas_detail_only_for_non_ignored_values():
     assert main.should_auto_enable_canvas_detail("None") is False
     assert main.should_auto_enable_canvas_detail("Random") is False
     assert main.should_auto_enable_canvas_detail("") is False
+
+
+def test_filter_blocked_canvas_character_tags_removes_scene_values():
+    filtered_tags = main.filter_blocked_canvas_character_tags(
+        ["female", "jungle temple ruins", "volumetric lighting", "anthro"],
+        ["jungle temple ruins", "volumetric lighting"],
+    )
+
+    assert filtered_tags == ["female", "anthro"]
+
+
+def test_sanitize_gui_text_replaces_bad_ti_character():
+    assert main.sanitize_gui_text("lighƟng and cinemaƟc") == "lighting and cinematic"
+
+
+def test_get_neutral_reset_value_prefers_none_over_random():
+    assert main.get_neutral_reset_value(["Random", "None", "female"], "female") == "None"
+
+
+def test_get_neutral_reset_value_uses_random_when_none_is_missing():
+    assert main.get_neutral_reset_value(["female", "Random", "male"], "female") == "Random"
+
+
+def test_get_neutral_reset_value_falls_back_when_neutral_values_are_missing():
+    assert main.get_neutral_reset_value(["female", "male"], "female") == "female"
+
+
+def test_compose_canvas_positive_prompt_uses_fixed_quality_prefix_and_weighted_bracket():
+    result = main.compose_canvas_positive_prompt(
+        ["female", "anthro", "striped fur", "panther anatomy"],
+        "1.15",
+    )
+
+    assert result == "score_9, score_8_up, score_7_up, rating_explicit, source_photography, raw photo, hyperrealistic, (female, anthro, striped fur, panther anatomy:1.15)"
+
+
+def test_update_canvas_prompts_builds_fixed_prefix_and_filters_scene_values():
+    class DummyText:
+        def __init__(self):
+            self.value = ""
+
+        def delete(self, *args):
+            self.value = ""
+
+        def insert(self, *args):
+            self.value = args[-1]
+
+        def get(self, *args):
+            return self.value
+
+    class DummyNode:
+        def generate_master(self, **_kwargs):
+            return "-", "negative prompt"
+
+    fake = SimpleNamespace()
+    fake.field_widgets = {
+        "gender": SimpleNamespace(value="female"),
+        "body_type": SimpleNamespace(value="anthro"),
+        "special_skin_type": SimpleNamespace(value="striped fur"),
+    }
+    fake.canvas_include_options = [
+        ("gender", "Gender"),
+        ("body_type", "Body Type"),
+        ("special_skin_type", "Special Skin Type"),
+    ]
+    fake.canvas_include_vars = {key: SimpleNamespace(get=lambda: True) for key in fake.field_widgets}
+    fake.location_var = SimpleNamespace(get=lambda: "night background")
+    fake.lighting_var = SimpleNamespace(get=lambda: "dark cinematic lighting")
+    fake.camera_var = SimpleNamespace(get=lambda: "abandoned_building")
+    fake.canvas_weight_var = SimpleNamespace(get=lambda: "1.15")
+    fake.seed_var = SimpleNamespace(get=lambda: "42")
+    fake.rating_var = SimpleNamespace(get=lambda: "rating_explicit")
+    fake.score_scheme_var = SimpleNamespace(get=lambda: "default high")
+    fake.nsfw_var = SimpleNamespace(get=lambda: False)
+    fake.sex_act_var = SimpleNamespace(get=lambda: "None")
+    fake.sex_position_var = SimpleNamespace(get=lambda: "None")
+    fake.use_break_var = SimpleNamespace(get=lambda: True)
+    fake.canvas_positive_text = DummyText()
+    fake.canvas_negative_text = DummyText()
+    custom_widget = SimpleNamespace(value="score_9, striped fur, dark cinematic lighting, night background, panther anatomy, lighƟng")
+    fake._get_widget_text_fields = lambda widgets: (custom_widget, None)
+    fake._read_widget_value = lambda widget: getattr(widget, "value", "")
+    fake._is_feral_gender = lambda value: False
+    fake._get_base_gender_from_value = lambda value: value
+
+    original_node = main.CR_Pony_Master
+    main.CR_Pony_Master = DummyNode
+    try:
+        main.PromptGui.update_canvas_prompts(fake)
+    finally:
+        main.CR_Pony_Master = original_node
+
+    assert fake.canvas_positive_text.value == "score_9, score_8_up, score_7_up, rating_explicit, source_photography, raw photo, hyperrealistic, (female, anthro, striped fur, panther anatomy:1.15)"
+    assert "night background" not in fake.canvas_positive_text.value
+    assert "dark cinematic lighting" not in fake.canvas_positive_text.value
+    assert "abandoned_building" not in fake.canvas_positive_text.value
+    assert "lighting" not in fake.canvas_positive_text.value
 
 
 def test_verify_pony_logic_blocks_human_with_special_skin():
